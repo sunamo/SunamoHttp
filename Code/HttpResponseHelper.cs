@@ -2,8 +2,22 @@ namespace SunamoHttp.Code;
 /// <summary>
 /// Can be only in shared coz is not available in standard
 /// </summary>
-public class HttpResponseHelperHttp
+public partial class HttpResponseHelper
 {
+    public static bool SomeError(HttpResponseMessage r)
+    {
+        if (r == null)
+        {
+            return true;
+        }
+
+        switch (StatusCodeToHttpStatusCode(r.StatusCode))
+        {
+            case HttpStatusCode.OK:
+                return false;
+        }
+        return true;
+    }
 
     public static bool SomeError(HttpWebResponse r)
     {
@@ -12,7 +26,7 @@ public class HttpResponseHelperHttp
             return true;
         }
 
-        switch (StatusCodeToHttpStatusCode( r.StatusCode))
+        switch (StatusCodeToHttpStatusCode(r.StatusCode))
         {
             case HttpStatusCode.OK:
                 return false;
@@ -27,7 +41,7 @@ public class HttpResponseHelperHttp
             return true;
         }
 
-        switch (StatusCodeToHttpStatusCode( r.StatusCode))
+        switch (StatusCodeToHttpStatusCode(r.StatusCode))
         {
             case HttpStatusCode.NotFound:
                 return true;
@@ -37,6 +51,6 @@ public class HttpResponseHelperHttp
 
     static HttpStatusCode StatusCodeToHttpStatusCode(HttpStatusCode s)
     {
-        return (HttpStatusCode)s;
+        return s;
     }
 }

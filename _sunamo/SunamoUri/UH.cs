@@ -5,4 +5,9 @@ internal class UH
     {
         return Path.GetFileName(uri);
     }
+
+    internal static string GetFileNameWithoutExtension(string p)
+    {
+        return Path.GetFileNameWithoutExtension(GetFileName(p));
+    }
 }
