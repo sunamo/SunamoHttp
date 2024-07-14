@@ -1,6 +1,3 @@
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
-
 namespace SunamoHttp.Code;
 
 public class NetHelperSunamo
@@ -22,16 +19,13 @@ public class NetHelperSunamo
                 return true;
             };
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-
         //client.ClientCredentials.ServiceCertificate.SslCertificateAuthentication =
         //new X509ServiceCertificateAuthentication()
         //{
         //    CertificateValidationMode = X509CertificateValidationMode.None,
         //    RevocationMode = System.Security.Cryptography.X509Certificates.X509RevocationMode.NoCheck
         //};
-
     }
-
     // callback used to validate the certificate in an SSL conversation
     private static bool ValidateRemoteCertificate(object sender, X509Certificate cert, X509Chain chain, SslPolicyErrors policyErrors)
     {
