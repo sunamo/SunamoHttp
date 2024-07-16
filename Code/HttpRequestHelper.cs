@@ -9,7 +9,7 @@ public static class HttpRequestHelper
     /// <param name="path"></param>
     /// <param name="uri"></param>
     /// <returns></returns>
-    public static string DownloadOrReadWorker(string path, string uri, DownloadOrReadArgs a = null)
+    public static async Task<string> DownloadOrReadWorker(string path, string uri, DownloadOrReadArgs a = null)
     {
         if (a == null)
         {
@@ -18,7 +18,7 @@ public static class HttpRequestHelper
         string html = null;
         if (!FS.ExistsFile(path) || a.forceDownload)
         {
-            Download(uri, null, path);
+            await Download(uri, null, path);
         }
         html = TF.ReadAllText(path);
         return html;
@@ -28,7 +28,7 @@ public static class HttpRequestHelper
     /// </summary>
     /// <param name="cache"></param>
     /// <param name="uri"></param>
-    public static string DownloadOrRead(string appDataCachePath, string uri, DownloadOrReadArgs a = null)
+    public static async Task<string> DownloadOrRead(string appDataCachePath, string uri, DownloadOrReadArgs a = null)
     {
         if (a == null)
         {
@@ -37,7 +37,7 @@ public static class HttpRequestHelper
         var v = UH.GetFileName(uri);
         var fn = FS.ReplaceInvalidFileNameChars(v);
         fn = FS.Combine(appDataCachePath, SH.AppendIfDontEndingWith(fn, AllExtensions.html));
-        return DownloadOrReadWorker(fn, uri);
+        return await DownloadOrReadWorker(fn, uri);
     }
     public static bool ExistsPage(string url)
     {
@@ -229,14 +229,14 @@ public static class HttpRequestHelper
     /// If return empty array, SharedAlgorithms.lastError contains HttpError
     /// </summary>
     /// <param name = "address"></param>
-    public static byte[] GetResponseBytes(string address, HttpMethod method, int timeoutInMs = 30000)
+    public static async Task<byte[]> GetResponseBytes(string address, HttpMethod method, int timeoutInMs = 30000)
     {
         var request = (HttpWebRequest)WebRequest.Create(address);
         request.Method = method.Method;
         request.UserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11";
         WebResponse r = null;
         int times = 5;
-        r = SharedAlgorithms.RepeatAfterTimeXTimes(times, timeoutInMs, new Func<WebResponse>(request.GetResponse));
+        r = await SharedAlgorithms.RepeatAfterTimeXTimesAsync(times, timeoutInMs, new Func<Task<WebResponse>>(request.GetResponseAsync));
         if (EqualityComparer<WebResponse>.Default.Equals(r, default(WebResponse)))
         {
             //var before = ThrowEx.FullNameOfExecutedCode(type, Exc.CallingMethod());
@@ -295,7 +295,7 @@ public static class HttpRequestHelper
     /// <param name="folder2"></param>
     /// <param name="co"></param>
     /// <param name="ext"></param>
-    public static void DownloadAll(List<string> hrefs, Func<string, bool> DontHaveAllowedExtension, string folder2, FileMoveCollisionOptionHttp co, string ext = null)
+    public static async Task DownloadAll(List<string> hrefs, Func<string, bool> DontHaveAllowedExtension, string folder2, FileMoveCollisionOptionHttp co, string ext = null)
     {
         if (co != FileMoveCollisionOptionHttp.Overwrite)
         {
@@ -304,7 +304,7 @@ public static class HttpRequestHelper
         foreach (var item in hrefs)
         {
             var tempPath = FS.GetTempFilePath();
-            Download(item, DontHaveAllowedExtension, tempPath);
+            await Download(item, DontHaveAllowedExtension, tempPath);
             var to = FS.Combine(folder2, Path.GetFileName(item) + ext);
             File.Move(tempPath, to, true);
         }
@@ -319,7 +319,7 @@ public static class HttpRequestHelper
     /// <param name = "folder2"></param>
     /// <param name = "fn"></param>
     /// <param name = "ext"></param>
-    public static bool Download(string href, Func<string, bool> DontHaveAllowedExtension, string folder2, string fn, string ext = null)
+    public static async Task<bool> Download(string href, Func<string, bool> DontHaveAllowedExtension, string folder2, string fn, string ext = null)
     {
         if (DontHaveAllowedExtension != null)
         {
@@ -338,7 +338,7 @@ public static class HttpRequestHelper
         FS.CreateFoldersPsysicallyUnlessThere(folder2);
         if (!FS.ExistsFile(path) || FS.GetFileSize(path) == 0)
         {
-            var c = GetResponseBytes(href, HttpMethod.Get);
+            var c = await GetResponseBytes(href, HttpMethod.Get);
             TF.WriteAllBytes(path, c);
             return true;
         }
@@ -352,11 +352,11 @@ public static class HttpRequestHelper
     /// <param name="DontHaveAllowedExtension"></param>
     /// <param name="path"></param>
     /// <returns></returns>
-    public static bool Download(string uri, Func<string, bool> DontHaveAllowedExtension, string path)
+    public static async Task<bool> Download(string uri, Func<string, bool> DontHaveAllowedExtension, string path)
     {
         string p, fn, ext;
         FS.GetPathAndFileNameWithoutExtension(path, out p, out fn, out ext);
-        return Download(uri, null, p, fn, Path.GetExtension(path));
+        return await Download(uri, null, p, fn, Path.GetExtension(path));
     }
     public static IProgressBarHttp clpb = null;
     /// <summary>
@@ -395,7 +395,7 @@ public static class HttpRequestHelper
         FS.CreateFoldersPsysicallyUnlessThere(folder2);
         if (!File.Exists(path) || new FileInfo(path).Length == 0)
         {
-            var c = GetResponseBytes(href, HttpMethod.Get, timeoutInMs);
+            var c = await GetResponseBytes(href, HttpMethod.Get, timeoutInMs);
             if (c.Length != 0)
             {
                 await File.WriteAllBytesAsync(path, c);

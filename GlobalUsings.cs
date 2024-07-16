@@ -29,3 +29,6 @@ global using SunamoHttp.Values;
 global using System.Globalization;
 global using System.Net.Security;
 global using System.Security.Cryptography.X509Certificates;
+global using SunamoHttp;
+global using SunamoHttp.Code;
+global using SunamoHttp._sunamo.SunamoStringGetLines;
