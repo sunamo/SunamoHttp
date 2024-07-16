@@ -1,9 +1,9 @@
-namespace SunamoHttp._sunamo;
 
+namespace SunamoHttp._sunamo;
 internal class SharedAlgorithms
 {
-    public static int lastError = -1;
-    public static Out RepeatAfterTimeXTimes<Out>(int times, int timeoutMs, Func<Out> a)
+    internal static int lastError = -1;
+    internal static Out RepeatAfterTimeXTimes<Out>(int times, int timeoutMs, Func<Out> a)
     {
         lastError = -1;
         Out result = default(Out);
