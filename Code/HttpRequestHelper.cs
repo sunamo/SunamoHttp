@@ -1,6 +1,6 @@
 namespace SunamoHttp.Code;
 
-public static partial class HttpRequestHelper
+public static class HttpRequestHelper
 {
     /// <summary>
     /// In earlier time return ext

@@ -19,6 +19,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="_sunamo\NewFolder\" />
+    <Folder Include="_sunamo\SunamoFileSystem\" />
+    <Folder Include="_sunamo\SunamoString\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Code\SunamoWebClient.cs">

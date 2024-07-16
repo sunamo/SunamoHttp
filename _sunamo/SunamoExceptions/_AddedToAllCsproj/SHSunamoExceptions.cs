@@ -1,7 +1,16 @@
-namespace SunamoHttp._sunamo.SunamoExceptions._AddedToAllCsproj;
+//namespace SunamoHttp._sunamo.SunamoExceptions._AddedToAllCsproj;
 
-internal class SHSunamoExceptions
+internal class SH
 {
+    internal static string AppendIfDontEndingWith(string text, string append)
+    {
+        if (text.EndsWith(append))
+        {
+            return text;
+        }
+        return text + append;
+    }
+
     internal static string JoinNL(List<string> l)
     {
         StringBuilder sb = new();

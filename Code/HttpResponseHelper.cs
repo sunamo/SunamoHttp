@@ -2,7 +2,7 @@ namespace SunamoHttp.Code;
 /// <summary>
 /// Can be only in shared coz is not available in standard
 /// </summary>
-public partial class HttpResponseHelper
+public class HttpResponseHelper
 {
     public static bool SomeError(HttpResponseMessage r)
     {
