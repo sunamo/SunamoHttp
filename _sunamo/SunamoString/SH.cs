@@ -1,4 +1,5 @@
 namespace SunamoHttp._sunamo.SunamoString;
+
 internal class SH
 {
     internal static string AppendIfDontEndingWith(string text, string append)
