@@ -1,4 +1,4 @@
-namespace SunamoHttp.Code;
+namespace SunamoHttp;
 
 public class NetHelper
 {

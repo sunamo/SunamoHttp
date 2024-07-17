@@ -1,4 +1,4 @@
-namespace SunamoHttp.Code;
+namespace SunamoHttp;
 
 /// <summary>
 /// Pokud chceš náhradu za třídu HttpRequestHelper, použij

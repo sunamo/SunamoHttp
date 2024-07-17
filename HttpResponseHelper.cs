@@ -1,10 +1,23 @@
-namespace SunamoHttp.Code;
+namespace SunamoHttp;
 /// <summary>
 /// Can be only in shared coz is not available in standard
 /// </summary>
-public class HttpWebResponseHelperHttp
+public class HttpResponseHelper
 {
+    public static bool SomeError(HttpResponseMessage r)
+    {
+        if (r == null)
+        {
+            return true;
+        }
 
+        switch (StatusCodeToHttpStatusCode(r.StatusCode))
+        {
+            case HttpStatusCode.OK:
+                return false;
+        }
+        return true;
+    }
 
     public static bool SomeError(HttpWebResponse r)
     {
@@ -13,9 +26,7 @@ public class HttpWebResponseHelperHttp
             return true;
         }
 
-        // 400 errors for Bojánci and other which doesn't exists on lfm
-        // 429 Too many errors (mainly for 
-        switch (r.StatusCode)
+        switch (StatusCodeToHttpStatusCode(r.StatusCode))
         {
             case HttpStatusCode.OK:
                 return false;
@@ -30,11 +41,16 @@ public class HttpWebResponseHelperHttp
             return true;
         }
 
-        switch (r.StatusCode)
+        switch (StatusCodeToHttpStatusCode(r.StatusCode))
         {
             case HttpStatusCode.NotFound:
                 return true;
         }
         return false;
+    }
+
+    static HttpStatusCode StatusCodeToHttpStatusCode(HttpStatusCode s)
+    {
+        return s;
     }
 }

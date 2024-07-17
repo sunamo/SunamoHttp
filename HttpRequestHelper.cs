@@ -1,4 +1,4 @@
-namespace SunamoHttp.Code;
+namespace SunamoHttp;
 
 public static class HttpRequestHelper
 {
@@ -25,6 +25,8 @@ public static class HttpRequestHelper
     }
     /// <summary>
     /// As folder is use Cache
+    /// 
+    /// POZOR, přehodil jsem A2 a A1
     /// </summary>
     /// <param name="cache"></param>
     /// <param name="uri"></param>
