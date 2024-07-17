@@ -31,3 +31,4 @@ global using System.Net.Security;
 global using System.Security.Cryptography.X509Certificates;
 global using SunamoHttp.Code;
 global using SunamoHttp._sunamo.SunamoStringGetLines;
+global using FileMs = System.IO.File;

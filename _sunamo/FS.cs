@@ -56,7 +56,7 @@ internal class FS
 
     internal static bool ExistsFile(string path)
     {
-        return FS.ExistsFile(path);
+        return FileMs.Exists(path);
     }
 
     internal static long GetFileSize(string item)
