@@ -1,14 +1,15 @@
-
 namespace SunamoHttp._sunamo;
+
 internal class SharedAlgorithms
 {
     internal static int lastError = -1;
+
     internal static Out RepeatAfterTimeXTimes<Out>(int times, int timeoutMs, Func<Out> a)
     {
         lastError = -1;
-        Out result = default(Out);
-        bool ok = false;
-        for (int i = 0; i < times; i++)
+        var result = default(Out);
+        var ok = false;
+        for (var i = 0; i < times; i++)
         {
             try
             {
@@ -20,31 +21,30 @@ internal class SharedAlgorithms
                 var m = ex.Message;
                 if (m.StartsWith("The remote server returned an error: "))
                 {
-                    var p = SHSplit.SplitMore(SHReplace.ReplaceOnce(m, "The remote server returned an error: ", string.Empty), AllStrings.space);
+                    var p = SHSplit.SplitMore(
+                        SHReplace.ReplaceOnce(m, "The remote server returned an error: ", string.Empty),
+                        AllStrings.space);
                     var s = p[0].TrimEnd(AllChars.rb).TrimStart(AllChars.lb);
                     lastError = int.Parse(s);
                 }
-                if (lastError == 404)
-                {
-                    return result;
-                }
+
+                if (lastError == 404) return result;
                 //The remote server returned an error: (404) Not Found.
                 Thread.Sleep(timeoutMs);
             }
-            if (ok)
-            {
-                break;
-            }
+
+            if (ok) break;
         }
+
         return result;
     }
 
     internal static async Task<Out> RepeatAfterTimeXTimesAsync<Out>(int times, int timeoutMs, Func<Task<Out>> a)
     {
         lastError = -1;
-        Out result = default(Out);
-        bool ok = false;
-        for (int i = 0; i < times; i++)
+        var result = default(Out);
+        var ok = false;
+        for (var i = 0; i < times; i++)
         {
             try
             {
@@ -56,22 +56,21 @@ internal class SharedAlgorithms
                 var m = ex.Message;
                 if (m.StartsWith("The remote server returned an error: "))
                 {
-                    var p = SHSplit.SplitMore(SHReplace.ReplaceOnce(m, "The remote server returned an error: ", string.Empty), AllStrings.space);
+                    var p = SHSplit.SplitMore(
+                        SHReplace.ReplaceOnce(m, "The remote server returned an error: ", string.Empty),
+                        AllStrings.space);
                     var s = p[0].TrimEnd(AllChars.rb).TrimStart(AllChars.lb);
                     lastError = int.Parse(s);
                 }
-                if (lastError == 404)
-                {
-                    return result;
-                }
+
+                if (lastError == 404) return result;
                 //The remote server returned an error: (404) Not Found.
                 Thread.Sleep(timeoutMs);
             }
-            if (ok)
-            {
-                break;
-            }
+
+            if (ok) break;
         }
+
         return result;
     }
 }

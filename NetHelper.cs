@@ -34,7 +34,7 @@ PostFiles(string address, HttpMethod method, IList<UploadFile> files, Dictionary
             requestStream.Write(buffer, 0, buffer.Length);
             buffer = Encoding.UTF8.GetBytes(string.Format("Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"{2}", file.Name, file.Filename, Environment.NewLine));
             requestStream.Write(buffer, 0, buffer.Length);
-            buffer = Encoding.ASCII.GetBytes(string.Format(sess.i18n(XlfKeys.ContentType011), file.ContentType, Environment.NewLine));
+            buffer = Encoding.ASCII.GetBytes(string.Format(null, file.ContentType, Environment.NewLine));
             requestStream.Write(buffer, 0, buffer.Length);
             file.Stream.CopyTo(requestStream);
             buffer = Encoding.ASCII.GetBytes(Environment.NewLine);

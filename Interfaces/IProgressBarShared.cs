@@ -1,14 +1,11 @@
 namespace SunamoHttp.Interfaces;
 
-
 public interface IProgressBarHttp
 {
     bool isRegistered { get; set; }
     int writeOnlyDividableBy { get; set; }
     void Init(IPercentCalculatorHttp pc);
     void Init(IPercentCalculatorHttp pc, bool isNotUt);
-
-
 
 
     void LyricsHelper_AnotherSong(object asyncResult);

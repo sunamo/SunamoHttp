@@ -1,4 +1,5 @@
 namespace SunamoHttp._sunamo.SunamoFileIO;
+
 internal class TF
 {
     internal static string ReadAllText(string path)

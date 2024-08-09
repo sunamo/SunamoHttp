@@ -1,6 +1,5 @@
 namespace SunamoHttp;
 
-
 public enum FileMoveCollisionOptionHttp
 {
     AddSerie,
