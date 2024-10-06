@@ -31,6 +31,7 @@ partial class HttpRequestHelper
         LogDownload(a.Logger, address);
 
         var request = (HttpWebRequest)WebRequest.Create(address);
+        request.CookieContainer = a.Cookies;
         request.Method = method.Method;
         request.UserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11";
         WebResponse r = null;
@@ -89,6 +90,7 @@ partial class HttpRequestHelper
         LogDownload(a.Logger, address);
 
         var request = (HttpWebRequest)WebRequest.CreateHttp(address);
+        request.CookieContainer = a.Cookies;
         request.Timeout = int.MaxValue;
         request.UserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11";
         var t = request.GetResponseAsync();
@@ -146,6 +148,7 @@ partial class HttpRequestHelper
         LogDownload(a.Logger, address);
 
         var request = (HttpWebRequest)WebRequest.Create(address);
+        request.CookieContainer = a.Cookies;
         request.Method = method.Method;
         HttpWebResponse response = null;
         try
@@ -199,6 +202,7 @@ partial class HttpRequestHelper
         // Cant create new instance, in A1 can be setted up property which is not allowed in Headers
         //request.Address = address;
         string result = null;
+        request.CookieContainer = a.Cookies;
         request.Method = method.Method;
         if (method == HttpMethod.Post)
         {
