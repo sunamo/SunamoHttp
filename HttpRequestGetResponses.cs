@@ -1,9 +1,7 @@
-
 namespace SunamoHttp;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,7 +38,7 @@ partial class HttpRequestHelper
         r = await SharedAlgorithms.RepeatAfterTimeXTimesAsync(times, timeoutInMs, new Func<Task<WebResponse>>(request.GetResponseAsync));
         if (EqualityComparer<WebResponse>.Default.Equals(r, default(WebResponse)))
         {
-            //var before = ThrowEx.FullNameOfExecutedCode(type, Exc.CallingMethod());
+            //var before = ThrowEx.FullNameOfExecutedCode(type, Exceptions.CallingMethod());
             //ThisApp.Warning(Exceptions.RepeatAfterTimeXTimesFailed(before, times, timeoutInMs, address, SharedAlgorithms.lastError));
             return new byte[0];
         }

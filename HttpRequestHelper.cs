@@ -20,7 +20,7 @@ public static partial class HttpRequestHelper
         {
             await Download(a, uri, null, path);
         }
-        html = TF.ReadAllText(path);
+        html = File.ReadAllText(path);
         return html;
     }
     /// <summary>
