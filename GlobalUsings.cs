@@ -27,3 +27,4 @@ global using System.Net.Security;
 global using System.Security.Cryptography.X509Certificates;
 global using FileMs = System.IO.File;
 global using System.Reflection;
+global using System.Diagnostics.CodeAnalysis;
