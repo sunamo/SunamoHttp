@@ -120,9 +120,9 @@ public static partial class HttpRequestHelper
         if (string.IsNullOrWhiteSpace(ext))
         {
             ext = FS.GetExtension(href);
-            ext = SHParts.RemoveAfterFirst(ext, AllStrings.q);
+            ext = SHParts.RemoveAfterFirst(ext, "?");
         }
-        fn = SHParts.RemoveAfterFirst(fn, AllStrings.q);
+        fn = SHParts.RemoveAfterFirst(fn, "?");
         string path = FS.Combine(folder2, fn + ext);
         FS.CreateFoldersPsysicallyUnlessThere(folder2);
         if (!FS.ExistsFile(path) || FS.GetFileSize(path) == 0)
@@ -229,7 +229,7 @@ public static partial class HttpRequestHelper
     {
         if (vr == "::1")
         {
-            vr = Consts.sunamoNetIp;
+            vr = "127.0.0.1";
         }
         return vr;
     }

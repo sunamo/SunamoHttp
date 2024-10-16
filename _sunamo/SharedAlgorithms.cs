@@ -23,8 +23,8 @@ internal class SharedAlgorithms
                 {
                     var p = SHSplit.SplitMore(
                         SHReplace.ReplaceOnce(m, "The remote server returned an error: ", string.Empty),
-                        AllStrings.space);
-                    var s = p[0].TrimEnd(AllChars.rb).TrimStart(AllChars.lb);
+                        "");
+                    var s = p[0].TrimEnd(')').TrimStart('(');
                     lastError = int.Parse(s);
                 }
 
@@ -58,8 +58,8 @@ internal class SharedAlgorithms
                 {
                     var p = SHSplit.SplitMore(
                         SHReplace.ReplaceOnce(m, "The remote server returned an error: ", string.Empty),
-                        AllStrings.space);
-                    var s = p[0].TrimEnd(AllChars.rb).TrimStart(AllChars.lb);
+                        "");
+                    var s = p[0].TrimEnd(')').TrimStart('(');
                     lastError = int.Parse(s);
                 }
 

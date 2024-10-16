@@ -13,7 +13,7 @@ global using SunamoHttp._sunamo.SunamoFileExtensions;
 global using SunamoHttp._sunamo.SunamoFileIO;
 global using SunamoHttp._sunamo.SunamoStringParts;
 global using SunamoHttp._sunamo.SunamoUri;
-global using SunamoHttp._sunamo.SunamoValues;
+global using SunamoHttp;
 global using SunamoHttp._sunamo.SunamoExceptions;
 global using SunamoHttp._sunamo.SunamoFileExtensions.Attributes;
 global using SunamoHttp._sunamo.SunamoFileExtensions.Enums;

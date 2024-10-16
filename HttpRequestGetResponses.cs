@@ -189,7 +189,7 @@ partial class HttpRequestHelper
             hrd = new HttpRequestData();
         }
         var address = request.Address.ToString();
-        int dex = address.IndexOf(AllChars.q);
+        int dex = address.IndexOf('?');
         string adressCopy = address;
         if (method.Method.ToUpper() == "POST")
         {

@@ -85,7 +85,7 @@ internal class FS
 
     internal static void GetPathAndFileNameWithoutExtension(string fn, out string path, out string file, out string ext)
     {
-        path = Path.GetDirectoryName(fn) + AllChars.bs;
+        path = Path.GetDirectoryName(fn) + '\\';
         file = Path.GetFileNameWithoutExtension(fn);
         ext = Path.GetExtension(fn);
     }
