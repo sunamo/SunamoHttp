@@ -1,22 +1,22 @@
 namespace SunamoHttp._sunamo.SunamoExceptions;
-public partial class ThrowEx
+internal partial class ThrowEx
 {
 
-    public static bool Custom(Exception ex, bool reallyThrow = true)
+    internal static bool Custom(Exception ex, bool reallyThrow = true)
     { return Custom(Exceptions.TextOfExceptions(ex), reallyThrow); }
 
-    public static bool Custom(string message, bool reallyThrow = true, string secondMessage = "")
+    internal static bool Custom(string message, bool reallyThrow = true, string secondMessage = "")
     {
         string joined = string.Join(" ", message, secondMessage);
         string? str = Exceptions.Custom(FullNameOfExecutedCode(), joined);
         return ThrowIsNotNull(str, reallyThrow);
     }
 
-    public static bool IsNullOrEmpty(string argName, string argValue)
+    internal static bool IsNullOrEmpty(string argName, string argValue)
     { return ThrowIsNotNull(Exceptions.IsNullOrWhitespace(FullNameOfExecutedCode(), argName, argValue, true)); }
 
     #region Other
-    public static string FullNameOfExecutedCode()
+    internal static string FullNameOfExecutedCode()
     {
         Tuple<string, string, string> placeOfExc = Exceptions.PlaceOfException();
         string f = FullNameOfExecutedCode(placeOfExc.Item1, placeOfExc.Item2, true);
@@ -57,7 +57,7 @@ public partial class ThrowEx
         return string.Concat(typeFullName, ".", methodName);
     }
 
-    public static bool ThrowIsNotNull(string? exception, bool reallyThrow = true)
+    internal static bool ThrowIsNotNull(string? exception, bool reallyThrow = true)
     {
         if (exception == null)
         {
