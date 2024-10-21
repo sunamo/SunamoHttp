@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 namespace SunamoHttp;
 
 public static partial class HttpRequestHelper
@@ -9,7 +11,7 @@ public static partial class HttpRequestHelper
     /// <param name="path"></param>
     /// <param name="uri"></param>
     /// <returns></returns>
-    public static async Task<string> DownloadOrReadWorker(string path, string uri, DownloadOrReadArgs a = null)
+    public static async Task<string> DownloadOrReadWorker(ILogger logger, string path, string uri, DownloadOrReadArgs a = null)
     {
         if (a == null)
         {
@@ -18,7 +20,7 @@ public static partial class HttpRequestHelper
         string html = null;
         if (!FS.ExistsFile(path) || a.forceDownload)
         {
-            await Download(a, uri, null, path);
+            await Download(logger, a, uri, null, path);
         }
         html = File.ReadAllText(path);
         return html;
@@ -30,7 +32,7 @@ public static partial class HttpRequestHelper
     /// </summary>
     /// <param name="cache"></param>
     /// <param name="uri"></param>
-    public static async Task<string> DownloadOrRead(string appDataCachePath, string uri, DownloadOrReadArgs a = null)
+    public static async Task<string> DownloadOrRead(ILogger logger, string appDataCachePath, string uri, DownloadOrReadArgs a = null)
     {
         if (a == null)
         {
@@ -39,7 +41,7 @@ public static partial class HttpRequestHelper
         var v = UH.GetFileName(uri);
         var fn = FS.ReplaceInvalidFileNameChars(v);
         fn = FS.Combine(appDataCachePath, SH.AppendIfDontEndingWith(fn, AllExtensions.html));
-        return await DownloadOrReadWorker(fn, uri);
+        return await DownloadOrReadWorker(logger, fn, uri);
     }
     public static bool ExistsPage(string url)
     {
@@ -63,16 +65,16 @@ public static partial class HttpRequestHelper
     }
 
 
-    public static bool IsNotFound(GetResponseArgs a, object uri)
+    public static bool IsNotFound(ILogger logger, GetResponseArgs a, object uri)
     {
         HttpWebResponse r;
-        var test = GetResponseText(a, uri.ToString(), HttpMethod.Get, null, out r);
+        var test = GetResponseText(logger, a, uri.ToString(), HttpMethod.Get, null, out r);
         return HttpResponseHelper.IsNotFound(r);
     }
-    public static bool SomeError(GetResponseArgs a, object uri)
+    public static bool SomeError(ILogger logger, GetResponseArgs a, object uri)
     {
         HttpWebResponse r;
-        var test = GetResponseText(a, uri.ToString(), HttpMethod.Get, null, out r);
+        var test = GetResponseText(logger, a, uri.ToString(), HttpMethod.Get, null, out r);
         return HttpResponseHelper.SomeError(r);
     }
 
@@ -84,7 +86,7 @@ public static partial class HttpRequestHelper
     /// <param name="folder2"></param>
     /// <param name="co"></param>
     /// <param name="ext"></param>
-    public static async Task DownloadAll(GetResponseArgs a, List<string> hrefs, Func<string, bool> DontHaveAllowedExtension, string folder2, FileMoveCollisionOptionHttp co, string ext = null)
+    public static async Task DownloadAll(ILogger logger, GetResponseArgs a, List<string> hrefs, Func<string, bool> DontHaveAllowedExtension, string folder2, FileMoveCollisionOptionHttp co, string ext = null)
     {
         if (co != FileMoveCollisionOptionHttp.Overwrite)
         {
@@ -93,7 +95,7 @@ public static partial class HttpRequestHelper
         foreach (var item in hrefs)
         {
             var tempPath = FS.GetTempFilePath();
-            await Download(a, item, DontHaveAllowedExtension, tempPath);
+            await Download(logger, a, item, DontHaveAllowedExtension, tempPath);
             var to = FS.Combine(folder2, Path.GetFileName(item) + ext);
             File.Move(tempPath, to, true);
         }
@@ -108,7 +110,7 @@ public static partial class HttpRequestHelper
     /// <param name = "folder2"></param>
     /// <param name = "fn"></param>
     /// <param name = "ext"></param>
-    public static async Task<bool> Download(GetResponseArgs a, string href, Func<string, bool> DontHaveAllowedExtension, string folder2, string fn, string ext = null)
+    public static async Task<bool> Download(ILogger logger, GetResponseArgs a, string href, Func<string, bool> DontHaveAllowedExtension, string folder2, string fn, string ext = null)
     {
         if (DontHaveAllowedExtension != null)
         {
@@ -127,7 +129,7 @@ public static partial class HttpRequestHelper
         FS.CreateFoldersPsysicallyUnlessThere(folder2);
         if (!FS.ExistsFile(path) || FS.GetFileSize(path) == 0)
         {
-            var c = await GetResponseBytes(a, href, HttpMethod.Get);
+            var c = await GetResponseBytes(logger, a, href, HttpMethod.Get);
             TF.WriteAllBytes(path, c);
             return true;
         }
@@ -142,11 +144,11 @@ public static partial class HttpRequestHelper
     /// <param name="DontHaveAllowedExtension"></param>
     /// <param name="path"></param>
     /// <returns></returns>
-    public static async Task<bool> Download(GetResponseArgs a, string uri, Func<string, bool> DontHaveAllowedExtension, string path)
+    public static async Task<bool> Download(ILogger logger, GetResponseArgs a, string uri, Func<string, bool> DontHaveAllowedExtension, string path)
     {
         string p, fn, ext;
         FS.GetPathAndFileNameWithoutExtension(path, out p, out fn, out ext);
-        return await Download(a, uri, null, p, fn, Path.GetExtension(path));
+        return await Download(logger, a, uri, null, p, fn, Path.GetExtension(path));
     }
     public static IProgressBarHttp clpb = null;
     /// <summary>
@@ -159,7 +161,7 @@ public static partial class HttpRequestHelper
     /// <param name = "folder2"></param>
     /// <param name = "fn"></param>
     /// <param name = "ext"></param>
-    public static async Task<bool> Download(GetResponseArgs a, string href, Func<string, bool> DontHaveAllowedExtension, string folder2, string fn, int timeoutInMs, string ext = null)
+    public static async Task<bool> Download(ILogger logger, GetResponseArgs a, string href, Func<string, bool> DontHaveAllowedExtension, string folder2, string fn, int timeoutInMs, string ext = null)
     {
         // TODO: měl jsem tu arg , string fullPathForCompare
         // zkontrolovat zda se tu ta cesta skládá správně
@@ -185,7 +187,7 @@ public static partial class HttpRequestHelper
         FS.CreateFoldersPsysicallyUnlessThere(folder2);
         if (!File.Exists(path) || new FileInfo(path).Length == 0)
         {
-            var c = await GetResponseBytes(a, href, HttpMethod.Get, timeoutInMs);
+            var c = await GetResponseBytes(logger, a, href, HttpMethod.Get, timeoutInMs);
             if (c.Length != 0)
             {
                 await File.WriteAllBytesAsync(path, c);

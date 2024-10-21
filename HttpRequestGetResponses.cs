@@ -19,14 +19,14 @@ partial class HttpRequestHelper
     /// If return empty array, SharedAlgorithms.lastError contains HttpError
     /// </summary>
     /// <param name = "address"></param>
-    public static async Task<byte[]> GetResponseBytes(GetResponseArgs a, string address, HttpMethod method, int timeoutInMs = 30000)
+    public static async Task<byte[]> GetResponseBytes(ILogger logger, GetResponseArgs a, string address, HttpMethod method, int timeoutInMs = 30000)
     {
         if (a == null)
         {
             a = new GetResponseArgs();
         }
 
-        LogDownload(a.Logger, address);
+        LogDownload(logger, address);
 
         var request = (HttpWebRequest)WebRequest.Create(address);
         request.CookieContainer = a.Cookies;
@@ -79,14 +79,14 @@ partial class HttpRequestHelper
     /// Is not async coz t.Result
     /// </summary>
     /// <param name="address"></param>
-    public async static Task<string> GetResponseTextAsync(GetResponseArgs a, string address)
+    public async static Task<string> GetResponseTextAsync(ILogger logger, GetResponseArgs a, string address)
     {
         if (a == null)
         {
             a = new GetResponseArgs();
         }
 
-        LogDownload(a.Logger, address);
+        LogDownload(logger, address);
 
         var request = (HttpWebRequest)WebRequest.CreateHttp(address);
         request.CookieContainer = a.Cookies;
@@ -127,24 +127,24 @@ partial class HttpRequestHelper
     /// <param name="address"></param>
     /// <param name="method"></param>
     /// <param name="hrd"></param>
-    public static string GetResponseText(GetResponseArgs a, string address, HttpMethod method, HttpRequestData hrd)
+    public static string GetResponseText(ILogger logger, GetResponseArgs a, string address, HttpMethod method, HttpRequestData hrd)
     {
         HttpWebResponse response;
-        return GetResponseText(a, address, method, hrd, out response);
+        return GetResponseText(logger, a, address, method, hrd, out response);
     }
 
     /// <summary>
     ///
     /// </summary>
     /// <param name = "address"></param>
-    public static Stream GetResponseStream(GetResponseArgs a, string address, HttpMethod method)
+    public static Stream GetResponseStream(ILogger logger, GetResponseArgs a, string address, HttpMethod method)
     {
         if (a == null)
         {
             a = new GetResponseArgs();
         }
 
-        LogDownload(a.Logger, address);
+        LogDownload(logger, address);
 
         var request = (HttpWebRequest)WebRequest.Create(address);
         request.CookieContainer = a.Cookies;
@@ -161,10 +161,10 @@ partial class HttpRequestHelper
         return response.GetResponseStream();
     }
 
-    public static string GetResponseText(GetResponseArgs a, string address, HttpMethod method, HttpRequestData hrd, out HttpWebResponse response)
+    public static string GetResponseText(ILogger logger, GetResponseArgs a, string address, HttpMethod method, HttpRequestData hrd, out HttpWebResponse response)
     {
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(address);
-        return GetResponseText(a, request, method, hrd, out response);
+        return GetResponseText(logger, a, request, method, hrd, out response);
     }
 
     /// <summary>
@@ -174,14 +174,14 @@ partial class HttpRequestHelper
     /// <param name = "address"></param>
     /// <param name = "method"></param>
     /// <param name = "hrd"></param>
-    public static string GetResponseText(GetResponseArgs a, HttpWebRequest request, HttpMethod method, HttpRequestData hrd, out HttpWebResponse response)
+    public static string GetResponseText(ILogger logger, GetResponseArgs a, HttpWebRequest request, HttpMethod method, HttpRequestData hrd, out HttpWebResponse response)
     {
         if (a == null)
         {
             a = new GetResponseArgs();
         }
 
-        LogDownload(a.Logger, request.RequestUri.ToString());
+        LogDownload(logger, request.RequestUri.ToString());
 
         response = null;
         if (hrd == null)
