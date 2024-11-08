@@ -1,6 +1,5 @@
-using Microsoft.Extensions.Logging;
-
 namespace SunamoHttp;
+using Microsoft.Extensions.Logging;
 
 public static partial class HttpRequestHelper
 {
@@ -119,6 +118,7 @@ public static partial class HttpRequestHelper
                 ext += ".jpeg";
             }
         }
+
         if (string.IsNullOrWhiteSpace(ext))
         {
             ext = FS.GetExtension(href);

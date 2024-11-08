@@ -10,6 +10,7 @@ public class HttpClientHelper
     {
     }
     public static HttpResponseMessage httpResponseMessage = null;
+
     /// <summary>
     /// Return always HttpResponseMessage, can't return HttpWebResponse
     /// Same url:
