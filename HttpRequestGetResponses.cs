@@ -1,4 +1,4 @@
-namespace SunamoHttp;
+﻿namespace SunamoHttp;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -30,7 +30,22 @@ partial class HttpRequestHelper
 
         var request = (HttpWebRequest)WebRequest.Create(address);
         request.CookieContainer = a.Cookies;
-        request.TransferEncoding = "UTF";
+
+        #region MyRegion
+        /*
+jsem nastavil protože běz něj nejde 
+
+        i tak pak dostávám:
+        'Transfer-Encoding: chunked' header can not be used when content object is not specified.
+
+        mělo by to být nějak kvůli seznamka.cz ale tu už dnes nepotřeubji, dělám to přes Selenium
+        takže zakomentuji oba dva
+         */
+        //request.SendChunked = true;
+
+        //request.TransferEncoding = "UTF-8"; 
+        #endregion
+
         request.Method = method.Method;
         request.UserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11";
         WebResponse r = null;
