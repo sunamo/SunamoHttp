@@ -23,7 +23,7 @@ internal class SharedAlgorithms
                 {
                     var p = SHSplit.SplitMore(
                         SHReplace.ReplaceOnce(m, "The remote server returned an error: ", string.Empty),
-                        "");
+                        " ");
                     var s = p[0].TrimEnd(')').TrimStart('(');
                     lastError = int.Parse(s);
                 }
@@ -58,7 +58,7 @@ internal class SharedAlgorithms
                 {
                     var p = SHSplit.SplitMore(
                         SHReplace.ReplaceOnce(m, "The remote server returned an error: ", string.Empty),
-                        "");
+                        " ");
                     var s = p[0].TrimEnd(')').TrimStart('(');
                     lastError = int.Parse(s);
                 }
