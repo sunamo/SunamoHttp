@@ -36,16 +36,16 @@ GetResponseText(string address, HttpMethod method, HttpRequestData hrd = null)
             await
 #endif
             GetResponse(address, method, hrd);
-        return GetResponseText(httpResponseMessage);
+        return await GetResponseText(httpResponseMessage);
     }
-    private static string GetResponseText(HttpResponseMessage response)
+    private static async Task<string> GetResponseText(HttpResponseMessage response)
     {
         string vr = "";
         using (response)
         {
             // Must be await, not AsyncHelper, not .Result, otherwise will be frozen
             //vr =  AsyncHelper.ci.GetResult<string>( response.Content.ReadAsStringAsync());
-            vr = response.Content.ReadAsStringAsync().Result;
+            vr = (await response.Content.ReadAsStringAsync()).FromSpace160To32();
         }
         return vr;
     }

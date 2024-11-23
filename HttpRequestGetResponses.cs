@@ -130,7 +130,7 @@ jsem nastavil protože běz něj nejde
                 {
                     reader = new StreamReader(responseStream, encoding);
                 }
-                string vr = reader.ReadToEnd();
+                string vr = reader.ReadToEnd().FromSpace160To32();
                 return vr;
             }
         }
@@ -275,7 +275,7 @@ jsem nastavil protože běz něj nejde
                 {
                     reader = new StreamReader(responseStream, encoding);
                 }
-                result = reader.ReadToEnd();
+                result = reader.ReadToEnd().FromSpace160To32();
             }
         }
         catch (System.Exception ex)

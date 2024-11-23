@@ -21,7 +21,7 @@ public static partial class HttpRequestHelper
         {
             await Download(logger, a, uri, null, path);
         }
-        html = File.ReadAllText(path);
+        html = File.ReadAllText(path).FromSpace160To32();
         return html;
     }
     /// <summary>

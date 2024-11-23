@@ -7,7 +7,7 @@ public class WebClientHelper
     public static string GetResponseText(string address, HttpMethod method, HttpRequestData hrd)
     {
         swc.hrd = hrd;
-        return swc.DownloadString(address);
+        return swc.DownloadString(address).FromSpace160To32();
     }
 
     public static byte[] GetResponseBytes(string address, HttpMethod method)
