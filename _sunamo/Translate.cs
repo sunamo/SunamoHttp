@@ -1,6 +1,6 @@
 namespace SunamoHttp._sunamo;
 
-internal class sess
+internal class Translate
 {
     internal static string FromKey(string contentType011)
     {
