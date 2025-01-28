@@ -3,10 +3,6 @@ namespace SunamoHttp._sunamo;
 //namespace SunamoHttp._sunamo.SunamoExceptions._AddedToAllCsproj;
 internal class FS
 {
-    internal static void CreateUpfoldersPsysicallyUnlessThere(string nad)
-    {
-        CreateFoldersPsysicallyUnlessThere(Path.GetDirectoryName(nad));
-    }
 
     internal static void CreateFoldersPsysicallyUnlessThere(string nad)
     {
