@@ -1,9 +1,4 @@
-﻿namespace SunamoHttp;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+namespace SunamoHttp;
 
 partial class HttpRequestHelper
 {
@@ -14,7 +9,6 @@ partial class HttpRequestHelper
             logger.LogTrace("Downloading " + address);
         }
     }
-
     /// <summary>
     /// If return empty array, SharedAlgorithms.lastError contains HttpError
     /// </summary>
@@ -25,27 +19,20 @@ partial class HttpRequestHelper
         {
             a = new GetResponseArgs();
         }
-
         LogDownload(logger, address);
-
         var request = (HttpWebRequest)WebRequest.Create(address);
         request.CookieContainer = a.Cookies;
-
         #region MyRegion
         /*
 jsem nastavil protože běz něj nejde 
-
         i tak pak dostávám:
         'Transfer-Encoding: chunked' header can not be used when content object is not specified.
-
         mělo by to být nějak kvůli seznamka.cz ale tu už dnes nepotřeubji, dělám to přes Selenium
         takže zakomentuji oba dva
          */
         //request.SendChunked = true;
-
         //request.TransferEncoding = "UTF-8"; 
         #endregion
-
         request.Method = method.Method;
         request.UserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11";
         WebResponse r = null;
@@ -89,7 +76,6 @@ jsem nastavil protože běz něj nejde
             }
         }
     }
-
     /// <summary>
     /// Is not async coz t.Result
     /// </summary>
@@ -100,9 +86,7 @@ jsem nastavil protože běz něj nejde
         {
             a = new GetResponseArgs();
         }
-
         LogDownload(logger, address);
-
         var request = (HttpWebRequest)WebRequest.CreateHttp(address);
         request.CookieContainer = a.Cookies;
         request.Timeout = int.MaxValue;
@@ -135,7 +119,6 @@ jsem nastavil protože běz něj nejde
             }
         }
     }
-
     /// <summary>
     /// A3 can be null
     /// </summary>
@@ -147,7 +130,6 @@ jsem nastavil protože běz něj nejde
         HttpWebResponse response;
         return GetResponseText(logger, a, address, method, hrd, out response);
     }
-
     /// <summary>
     ///
     /// </summary>
@@ -158,9 +140,7 @@ jsem nastavil protože běz něj nejde
         {
             a = new GetResponseArgs();
         }
-
         LogDownload(logger, address);
-
         var request = (HttpWebRequest)WebRequest.Create(address);
         request.CookieContainer = a.Cookies;
         request.Method = method.Method;
@@ -175,13 +155,11 @@ jsem nastavil protože běz něj nejde
         }
         return response.GetResponseStream();
     }
-
     public static string GetResponseText(ILogger logger, GetResponseArgs a, string address, HttpMethod method, HttpRequestData hrd, out HttpWebResponse response)
     {
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(address);
         return GetResponseText(logger, a, request, method, hrd, out response);
     }
-
     /// <summary>
     /// A3 can be null
     /// Dont forger Dispose on A4
@@ -195,9 +173,7 @@ jsem nastavil protože běz něj nejde
         {
             a = new GetResponseArgs();
         }
-
         LogDownload(logger, request.RequestUri.ToString());
-
         response = null;
         if (hrd == null)
         {

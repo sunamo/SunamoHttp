@@ -1,5 +1,4 @@
 namespace SunamoHttp.Args;
-using Microsoft.Extensions.Logging;
 
 public class GetResponseArgs
 {
