@@ -1,5 +1,4 @@
 namespace SunamoHttp;
-using Microsoft.Extensions.Logging;
 
 public static partial class HttpRequestHelper
 {
@@ -62,8 +61,6 @@ public static partial class HttpRequestHelper
             return false;
         }
     }
-
-
     public static bool IsNotFound(ILogger logger, GetResponseArgs a, object uri)
     {
         HttpWebResponse r;
@@ -76,7 +73,6 @@ public static partial class HttpRequestHelper
         var test = GetResponseText(logger, a, uri.ToString(), HttpMethod.Get, null, out r);
         return HttpResponseHelper.SomeError(r);
     }
-
     /// <summary>
     /// A2 can be null (if dont have duplicated extension, set null)
     /// </summary>
@@ -118,7 +114,6 @@ public static partial class HttpRequestHelper
                 ext += ".jpeg";
             }
         }
-
         if (string.IsNullOrWhiteSpace(ext))
         {
             ext = FS.GetExtension(href);
@@ -135,7 +130,6 @@ public static partial class HttpRequestHelper
         }
         return false;
     }
-
     /// <summary>
     /// In earlier time return ext
     /// Now return whether was downloaded
