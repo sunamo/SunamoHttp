@@ -22,7 +22,7 @@ internal class SharedAlgorithms
                 var m = ex.Message;
                 if (m.StartsWith("The remote server returned an error: "))
                 {
-                    var p = SHSplit.SplitMore(
+                    var p = SHSplit.Split(
                         SHReplace.ReplaceOnce(m, "The remote server returned an error: ", string.Empty),
                         " ");
                     var s = p[0].TrimEnd(')').TrimStart('(');

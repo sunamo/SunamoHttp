@@ -8,9 +8,9 @@ public interface IProgressBarHttp
     void Init(IPercentCalculatorHttp pc, bool isNotUt);
 
 
-    void LyricsHelper_AnotherSong(object asyncResult);
-    void LyricsHelper_AnotherSong();
-    void LyricsHelper_AnotherSong(int i);
-    void LyricsHelper_OverallSongs(int obj);
-    void LyricsHelper_WriteProgressBarEnd();
+    void DoneOne(object asyncResult);
+    void DoneOne();
+    void DoneOne(int i);
+    void Start(int obj);
+    void Done();
 }
