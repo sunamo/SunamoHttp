@@ -142,7 +142,7 @@ public static partial class HttpRequestHelper
     {
         string p, fn, ext;
         FS.GetPathAndFileNameWithoutExtension(path, out p, out fn, out ext);
-        return await Download(logger, a, uri, null, p, fn, Path.GetExtension(path));
+        return await Download(logger, a, uri, DontHaveAllowedExtension, p, fn, Path.GetExtension(path));
     }
     public static IProgressBarHttp clpb = null;
     /// <summary>

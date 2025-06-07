@@ -27,10 +27,5 @@ public class NetHelperSunamo
         //};
     }
     // callback used to validate the certificate in an SSL conversation
-    private static bool ValidateRemoteCertificate(object sender, X509Certificate cert, X509Chain chain, SslPolicyErrors policyErrors)
-    {
-        //object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors
-        bool result = cert.Subject.Contains("YourServerName");
-        return result;
-    }
+
 }
