@@ -1,3 +1,6 @@
+// EN: Variable names have been checked and replaced with self-descriptive names
+// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+
 namespace SunamoHttp;
 
 partial class HttpRequestHelper
@@ -77,7 +80,7 @@ jsem nastavil protože běz něj nejde
         }
     }
     /// <summary>
-    /// Is not async coz t.Result
+    /// Is not async coz temp.Result
     /// </summary>
     /// <param name="address"></param>
     public async static Task<string> GetResponseTextAsync(ILogger logger, GetResponseArgs a, string address)
@@ -91,8 +94,8 @@ jsem nastavil protože běz něj nejde
         request.CookieContainer = a.Cookies;
         request.Timeout = int.MaxValue;
         request.UserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11";
-        var t = request.GetResponseAsync();
-        using (var response = (HttpWebResponse)t.Result)
+        var temp = request.GetResponseAsync();
+        using (var response = (HttpWebResponse)temp.Result)
         {
             Encoding encoding = null;
             if (response.CharacterSet == "")

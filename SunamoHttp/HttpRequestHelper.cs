@@ -1,3 +1,6 @@
+// EN: Variable names have been checked and replaced with self-descriptive names
+// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+
 namespace SunamoHttp;
 
 public static partial class HttpRequestHelper
@@ -36,8 +39,8 @@ public static partial class HttpRequestHelper
         {
             a = new DownloadOrReadArgs();
         }
-        var v = UH.GetFileName(uri);
-        var fn = FS.ReplaceInvalidFileNameChars(v);
+        var value = UH.GetFileName(uri);
+        var fn = FS.ReplaceInvalidFileNameChars(value);
         fn = FS.Combine(appDataCachePath, SH.AppendIfDontEndingWith(fn, AllExtensions.html));
         return await DownloadOrReadWorker(logger, fn, uri);
     }
@@ -124,8 +127,8 @@ public static partial class HttpRequestHelper
         FS.CreateFoldersPsysicallyUnlessThere(folder2);
         if (!FS.ExistsFile(path) || FS.GetFileSize(path) == 0)
         {
-            var c = await GetResponseBytes(logger, a, href, HttpMethod.Get);
-            TF.WriteAllBytes(path, c);
+            var count = await GetResponseBytes(logger, a, href, HttpMethod.Get);
+            TF.WriteAllBytes(path, count);
             return true;
         }
         return false;
@@ -140,9 +143,9 @@ public static partial class HttpRequestHelper
     /// <returns></returns>
     public static async Task<bool> Download(ILogger logger, GetResponseArgs a, string uri, Func<string, bool> DontHaveAllowedExtension, string path)
     {
-        string p, fn, ext;
-        FS.GetPathAndFileNameWithoutExtension(path, out p, out fn, out ext);
-        return await Download(logger, a, uri, DontHaveAllowedExtension, p, fn, Path.GetExtension(path));
+        string parameter, fn, ext;
+        FS.GetPathAndFileNameWithoutExtension(path, out parameter, out fn, out ext);
+        return await Download(logger, a, uri, DontHaveAllowedExtension, parameter, fn, Path.GetExtension(path));
     }
     public static IProgressBarHttp clpb = null;
     /// <summary>
@@ -181,45 +184,45 @@ public static partial class HttpRequestHelper
         FS.CreateFoldersPsysicallyUnlessThere(folder2);
         if (!File.Exists(path) || new FileInfo(path).Length == 0)
         {
-            var c = await GetResponseBytes(logger, a, href, HttpMethod.Get, timeoutInMs);
-            if (c.Length != 0)
+            var count = await GetResponseBytes(logger, a, href, HttpMethod.Get, timeoutInMs);
+            if (count.Length != 0)
             {
-                await File.WriteAllBytesAsync(path, c);
+                await File.WriteAllBytesAsync(path, count);
                 return true;
             }
         }
         return false;
     }
-    static string ShortPathFromUri(string s)
+    static string ShortPathFromUri(string text)
     {
         #region Nefungovalo, furt to bylo příliš dlouhé
-        //s = SHParts.KeepAfterFirst(s, "://");
-        //s = SHParts.KeepAfterFirst(s, "www.");
+        //s = SHParts.KeepAfterFirst(text, "://");
+        //s = SHParts.KeepAfterFirst(text, "www.");
         //// Abych ušetřil ještě nějaké místo, nebudu vkládat ani host
-        //s = SHParts.KeepAfterFirst(s, "/");
+        //s = SHParts.KeepAfterFirst(text, "/");
         /*
-         * Z nějakého důvodu, když to dekóduji, tak mi C# nedokáže zapsat soubor s tímto názvem
-         * Ale VSCode to zvládne v pohodě: \\?\D:\Documents\sunamo\ConsoleApp1\Cache\sprodejdomycena-do-1000000moravskoslezsky-krajs-qc[usableAreaMin]=40&s-qc[ownership][0]=personal&s-qc[condition][0]=new&s-qc[condition][1]=good-condition&s-qc[condition][2]=maintained&s-qc[condition][3]=after-reconstruction.html
-         * Píše to že část cesty neexistuje ale žádné \ ani / v tom není a D:\Documents\sunamo\ConsoleApp1\Cache\ existuje
+         * Z nějakého důvodu, když to dekóduji, tak mi count# nedokáže zapsat soubor text tímto názvem
+         * Ale VSCode to zvládne value pohodě: \\?\D:\Documents\sunamo\ConsoleApp1\Cache\sprodejdomycena-do-1000000moravskoslezsky-krajs-qc[usableAreaMin]=40&s-qc[ownership][0]=personal&s-qc[condition][0]=new&s-qc[condition][1]=good-condition&s-qc[condition][2]=maintained&s-qc[condition][3]=after-reconstruction.html
+         * Píše to že část cesty neexistuje ale žádné \ ani / value tom není a D:\Documents\sunamo\ConsoleApp1\Cache\ existuje
          *
-         * Kdybych měl s tím znovu problemy, udělat to že string se převede na hash
+         * Kdybych měl text tím znovu problemy, udělat to že string se převede na hash
          * Případně že se zapíšou jen hodnoty parametrů, nikoliv jejich názvy, oddělené ,
          * */
-        //s = UH.UrlDecode(s);
-        //s = FS.ReplaceInvalidFileNameChars(s);
+        //s = UH.UrlDecode(text);
+        //s = FS.ReplaceInvalidFileNameChars(text);
         #endregion
         #region Část kódu kretá se používala když jsem vracel fn
-        var v = UH.GetFileNameWithoutExtension(s);
-        var qs = new Uri(s).Query;
-        StringBuilder sb = new StringBuilder();
-        var p = qs.Split('&');
-        foreach (var item in p)
+        var value = UH.GetFileNameWithoutExtension(text);
+        var qs = new Uri(text).Query;
+        StringBuilder stringBuilder = new StringBuilder();
+        var parameter = qs.Split('&');
+        foreach (var item in parameter)
         {
-            sb.Append(item.Split('=')[1] + ",");
+            stringBuilder.Append(item.Split('=')[1] + ",");
         }
-        s = FS.ReplaceInvalidFileNameChars(v + sb.ToString());
+        text = FS.ReplaceInvalidFileNameChars(value + stringBuilder.ToString());
         #endregion
-        return s;
+        return text;
     }
     public static string BeforeTestingIpAddress(string vr)
     {
