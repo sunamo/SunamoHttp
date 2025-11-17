@@ -6,7 +6,7 @@ namespace RunnerHttp;
 
 internal class Program
 {
-    static void Main()
+    static void Main(string[] args)
     {
         MainAsync(args).GetAwaiter().GetResult();
 
