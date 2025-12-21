@@ -1,6 +1,7 @@
+namespace SunamoHttp;
+
 // EN: Variable names have been checked and replaced with self-descriptive names
 // CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
-namespace SunamoHttp;
 /// <summary>
 /// Can be only in shared coz is not available in standard
 /// </summary>

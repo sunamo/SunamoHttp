@@ -1,6 +1,7 @@
+namespace SunamoHttp._sunamo.SunamoFileExtensions;
+
 // EN: Variable names have been checked and replaced with self-descriptive names
 // CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
-namespace SunamoHttp._sunamo.SunamoFileExtensions;
 /// <summary>
 ///     Use Generate for AllExtensions when is adding more than 1 new extension
 /// </summary>
