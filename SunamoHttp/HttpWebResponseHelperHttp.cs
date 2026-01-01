@@ -1,24 +1,26 @@
 namespace SunamoHttp;
 
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 /// <summary>
-/// Can be only in shared coz is not available in standard
+/// Helper class for HttpWebResponse operations
+/// Can be only in shared because is not available in standard
 /// </summary>
 public class HttpWebResponseHelperHttp
 {
-
-
-    public static bool SomeError(HttpWebResponse r)
+    /// <summary>
+    /// Checks if the response contains any error
+    /// </summary>
+    /// <param name="response">The HTTP web response to check</param>
+    /// <returns>True if there is an error (status code is not OK), false otherwise</returns>
+    public static bool SomeError(HttpWebResponse response)
     {
-        if (r == null)
+        if (response == null)
         {
             return true;
         }
 
-        // 400 errors for Bojánci and other which doesn't exists on lfm
-        // 429 Too many errors (mainly for 
-        switch (r.StatusCode)
+        // 400 errors for artists and other which doesn't exist
+        // 429 Too many errors (mainly for rate limiting)
+        switch (response.StatusCode)
         {
             case HttpStatusCode.OK:
                 return false;
@@ -26,14 +28,19 @@ public class HttpWebResponseHelperHttp
         return true;
     }
 
-    public static bool IsNotFound(HttpWebResponse r)
+    /// <summary>
+    /// Checks if the response indicates a not found status
+    /// </summary>
+    /// <param name="response">The HTTP web response to check</param>
+    /// <returns>True if the resource was not found, false otherwise</returns>
+    public static bool IsNotFound(HttpWebResponse response)
     {
-        if (r == null)
+        if (response == null)
         {
             return true;
         }
 
-        switch (r.StatusCode)
+        switch (response.StatusCode)
         {
             case HttpStatusCode.NotFound:
                 return true;

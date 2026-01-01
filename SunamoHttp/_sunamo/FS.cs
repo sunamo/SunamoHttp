@@ -1,124 +1,136 @@
 namespace SunamoHttp._sunamo;
 
-//namespace SunamoHttp._sunamo.SunamoExceptions._AddedToAllCsproj;
+/// <summary>
+/// File system helper methods
+/// </summary>
 internal class FS
 {
-
-    internal static void CreateFoldersPsysicallyUnlessThere(string nad)
+    /// <summary>
+    /// Creates all folders in the path physically unless they already exist
+    /// </summary>
+    /// <param name="path">The directory path to create</param>
+    internal static void CreateFoldersPsysicallyUnlessThere(string path)
     {
-        ThrowEx.IsNullOrEmpty("nad", nad);
-        //ThrowEx.IsNotWindowsPathFormat("nad", nad);
+        ThrowEx.IsNullOrEmpty("path", path);
 
-
-        if (Directory.Exists(nad))
+        if (Directory.Exists(path))
         {
             return;
         }
 
-        List<string> slozkyKVytvoreni = new List<string>
+        List<string> foldersToCreate = new List<string>
         {
-            nad
+            path
         };
 
         while (true)
         {
-            nad = Path.GetDirectoryName(nad);
+            path = Path.GetDirectoryName(path);
 
-            // TODO: Tady to nefunguje pro UWP/UAP apps protoze nemaji pristup k celemu disku. Zjistit co to je UWP/UAP/... a jak v nem ziskat/overit jakoukoliv slozku na disku
-            if (Directory.Exists(nad))
+            // TODO: This doesn't work for UWP/UAP apps because they don't have access to the entire disk.
+            // Need to determine what UWP/UAP is and how to get/verify any folder on the disk in it
+            if (Directory.Exists(path))
             {
                 break;
             }
 
-            string kopia = nad;
-            slozkyKVytvoreni.Add(kopia);
+            foldersToCreate.Add(path);
         }
 
-        slozkyKVytvoreni.Reverse();
-        foreach (string item in slozkyKVytvoreni)
+        foldersToCreate.Reverse();
+        foreach (string item in foldersToCreate)
         {
-            string folder = item;
-            if (!Directory.Exists(folder))
+            if (!Directory.Exists(item))
             {
-                Directory.CreateDirectory(folder);
+                Directory.CreateDirectory(item);
             }
         }
     }
 
-    internal static string Combine(params string[] folder2)
+    /// <summary>
+    /// Combines multiple path segments into a single path
+    /// </summary>
+    /// <param name="paths">The path segments to combine</param>
+    /// <returns>The combined path</returns>
+    internal static string Combine(params string[] paths)
     {
-        return Path.Combine(folder2);
+        return Path.Combine(paths);
     }
 
+    /// <summary>
+    /// Checks if a file exists at the specified path
+    /// </summary>
+    /// <param name="path">The file path to check</param>
+    /// <returns>True if the file exists, false otherwise</returns>
     internal static bool ExistsFile(string path)
     {
         return FileMs.Exists(path);
     }
 
-    internal static long GetFileSize(string item)
+    /// <summary>
+    /// Gets the size of the file in bytes
+    /// </summary>
+    /// <param name="filePath">The path to the file</param>
+    /// <returns>The file size in bytes, or 0 if file doesn't exist or error occurs</returns>
+    internal static long GetFileSize(string filePath)
     {
-        FileInfo fi = null;
+        FileInfo fileInfo = null;
         try
         {
-            fi = new FileInfo(item);
+            fileInfo = new FileInfo(filePath);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            // Například příliš dlouhý název souboru
+            // For example, file name is too long
             return 0;
         }
-        if (fi.Exists)
+        if (fileInfo.Exists)
         {
-            return fi.Length;
+            return fileInfo.Length;
         }
         return 0;
     }
 
-    internal static string GetExtension(string href)
+    /// <summary>
+    /// Gets the extension of the file
+    /// </summary>
+    /// <param name="path">The file path</param>
+    /// <returns>The file extension including the dot</returns>
+    internal static string GetExtension(string path)
     {
-        return Path.GetExtension(href);
+        return Path.GetExtension(path);
     }
 
-    internal static void GetPathAndFileNameWithoutExtension(string fn, out string path, out string file, out string ext)
+    /// <summary>
+    /// Gets the path, file name without extension, and extension from a file path
+    /// </summary>
+    /// <param name="filePath">The full file path</param>
+    /// <param name="path">Output parameter for the directory path</param>
+    /// <param name="file">Output parameter for the file name without extension</param>
+    /// <param name="ext">Output parameter for the file extension</param>
+    internal static void GetPathAndFileNameWithoutExtension(string filePath, out string path, out string file, out string ext)
     {
-        path = Path.GetDirectoryName(fn) + '\\';
-        file = Path.GetFileNameWithoutExtension(fn);
-        ext = Path.GetExtension(fn);
+        path = Path.GetDirectoryName(filePath) + '\\';
+        file = Path.GetFileNameWithoutExtension(filePath);
+        ext = Path.GetExtension(filePath);
     }
 
+    /// <summary>
+    /// Gets a temporary file path
+    /// </summary>
+    /// <returns>A full path to a temporary file</returns>
     internal static string GetTempFilePath()
     {
         return Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetTempFileName());
     }
 
-    //internal static void MoveFile(string item, string fileTo, FileMoveCollisionOption co)
-    //{
-    //    if (CopyMoveFilePrepare(ref item, ref fileTo, co))
-    //    {
-    //        try
-    //        {
-    //            item = FS.MakeUncLongPath(item);
-    //            fileTo = FS.MakeUncLongPath(fileTo);
-
-    //            if (co == FileMoveCollisionOption.DontManipulate && File.Exists(fileTo))
-    //            {
-    //                return;
-    //            }
-    //            File.Move(item, fileTo);
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            //ThisApp.Error(item + " : " + ex.Message);
-    //        }
-    //    }
-    //    else
-    //    {
-    //    }
-    //}
-
-    internal static string ReplaceInvalidFileNameChars(string v)
+    /// <summary>
+    /// Replaces all invalid file name characters with empty string
+    /// </summary>
+    /// <param name="fileName">The file name to sanitize</param>
+    /// <returns>The file name with invalid characters removed</returns>
+    internal static string ReplaceInvalidFileNameChars(string fileName)
     {
-        return string.Concat(v.Split(Path.GetInvalidFileNameChars()));
+        return string.Concat(fileName.Split(Path.GetInvalidFileNameChars()));
     }
-
 }

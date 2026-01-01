@@ -1,19 +1,30 @@
 namespace SunamoHttp;
 
+/// <summary>
+/// Network helper utilities for HTTP operations
+/// </summary>
 public class NetHelper
 {
+    /// <summary>
+    /// Posts files with form data to the specified address
+    /// </summary>
+    /// <param name="address">The URL address</param>
+    /// <param name="method">The HTTP method</param>
+    /// <param name="files">The files to upload</param>
+    /// <param name="values">The form values</param>
+    /// <param name="httpRequestData">The HTTP request configuration data</param>
+    /// <returns>The response text</returns>
     public static
 #if ASYNC
 async Task<string>
 #else
 string
 #endif
-PostFiles(string address, HttpMethod method, IList<UploadFile> files, Dictionary<string, string> values, HttpRequestData hrd)
+PostFiles(string address, HttpMethod method, IList<UploadFile> files, Dictionary<string, string> values, HttpRequestData httpRequestData)
     {
         var boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x", NumberFormatInfo.InvariantInfo);
-        hrd.contentType = "multipart/form-data; boundary=" + boundary;
-        //hrd.timeout = Timeout.Infinite;
-        hrd.keepAlive = false;
+        httpRequestData.ContentType = "multipart/form-data; boundary=" + boundary;
+        httpRequestData.KeepAlive = false;
         boundary = "--" + boundary;
         MemoryStream requestStream = new MemoryStream();
         var content = new StreamContent(requestStream);
@@ -42,36 +53,40 @@ PostFiles(string address, HttpMethod method, IList<UploadFile> files, Dictionary
         }
         var boundaryBuffer = Encoding.ASCII.GetBytes(boundary + "--");
         requestStream.Write(boundaryBuffer, 0, boundaryBuffer.Length);
-        if (hrd.contentType != null)
+        if (httpRequestData.ContentType != null)
         {
-            content.Headers.Add("Content-Type", hrd.contentType);
+            content.Headers.Add("Content-Type", httpRequestData.ContentType);
         }
-        hrd.content = content;
-        var vr =
+        httpRequestData.Content = content;
+        var responseText =
 #if ASYNC
 await
 #endif
-HttpClientHelper.GetResponseText(address, method, hrd);
-        string vr2 = vr;
-        return vr2;
+HttpClientHelper.GetResponseText(address, method, httpRequestData);
+        return responseText;
     }
-    private static void SetHttpHeaders(HttpRequestData hrd, HttpRequestMessage hrm)
+
+    /// <summary>
+    /// Sets HTTP headers on the request message
+    /// </summary>
+    /// <param name="httpRequestData">The HTTP request configuration data</param>
+    /// <param name="httpRequestMessage">The HTTP request message</param>
+    private static void SetHttpHeaders(HttpRequestData httpRequestData, HttpRequestMessage httpRequestMessage)
     {
-        //request.UserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11";
-        hrm.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36");
-        if (hrd.accept != null)
+        httpRequestMessage.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36");
+        if (httpRequestData.Accept != null)
         {
-            hrm.Headers.Add(HttpKnownHeaderNames.Accept, hrd.accept);
+            httpRequestMessage.Headers.Add(HttpKnownHeaderNames.Accept, httpRequestData.Accept);
         }
-        if (hrd.keepAlive.HasValue)
+        if (httpRequestData.KeepAlive.HasValue)
         {
-            hrm.Headers.Add(HttpKnownHeaderNames.KeepAlive, hrd.keepAlive.ToString());
+            httpRequestMessage.Headers.Add(HttpKnownHeaderNames.KeepAlive, httpRequestData.KeepAlive.ToString());
         }
-        if (hrd != null)
+        if (httpRequestData != null)
         {
-            foreach (var item in hrd.headers)
+            foreach (var item in httpRequestData.Headers)
             {
-                hrm.Headers.Add(item.Key, item.Value);
+                httpRequestMessage.Headers.Add(item.Key, item.Value);
             }
         }
     }

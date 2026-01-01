@@ -1,115 +1,148 @@
 namespace SunamoHttp;
 
+/// <summary>
+/// Helper class for HTTP request operations
+/// </summary>
 public static partial class HttpRequestHelper
 {
     /// <summary>
+    /// Downloads or reads a file from cache
     /// In earlier time return ext
     /// Now return whether was downloaded
     /// </summary>
-    /// <param name="path"></param>
-    /// <param name="uri"></param>
-    /// <returns></returns>
-    public static async Task<string> DownloadOrReadWorker(ILogger logger, string path, string uri, DownloadOrReadArgs a = null)
+    /// <param name="logger">The logger instance</param>
+    /// <param name="path">The local file path</param>
+    /// <param name="uri">The URI to download from</param>
+    /// <param name="args">The download or read arguments</param>
+    /// <returns>The HTML content</returns>
+    public static async Task<string> DownloadOrReadWorker(ILogger logger, string path, string uri, DownloadOrReadArgs args = null)
     {
-        if (a == null)
+        if (args == null)
         {
-            a = new DownloadOrReadArgs();
+            args = new DownloadOrReadArgs();
         }
         string html = null;
-        if (!FS.ExistsFile(path) || a.forceDownload)
+        if (!FS.ExistsFile(path) || args.ForceDownload)
         {
-            await Download(logger, a, uri, null, path);
+            await Download(logger, args, uri, null, path);
         }
         html = File.ReadAllText(path).FromSpace160To32();
         return html;
     }
+
     /// <summary>
-    /// As folder is use Cache
-    /// 
-    /// POZOR, přehodil jsem A2 a A1
+    /// Downloads or reads content from cache folder
+    /// WARNING: Switched parameter order - A2 and A1
     /// </summary>
-    /// <param name="cache"></param>
-    /// <param name="uri"></param>
-    public static async Task<string> DownloadOrRead(ILogger logger, string appDataCachePath, string uri, DownloadOrReadArgs a = null)
+    /// <param name="logger">The logger instance</param>
+    /// <param name="appDataCachePath">The cache folder path</param>
+    /// <param name="uri">The URI to download from</param>
+    /// <param name="args">The download or read arguments</param>
+    /// <returns>The downloaded or cached content</returns>
+    public static async Task<string> DownloadOrRead(ILogger logger, string appDataCachePath, string uri, DownloadOrReadArgs args = null)
     {
-        if (a == null)
+        if (args == null)
         {
-            a = new DownloadOrReadArgs();
+            args = new DownloadOrReadArgs();
         }
         var value = UH.GetFileName(uri);
-        var fn = FS.ReplaceInvalidFileNameChars(value);
-        fn = FS.Combine(appDataCachePath, SH.AppendIfDontEndingWith(fn, AllExtensions.html));
-        return await DownloadOrReadWorker(logger, fn, uri);
+        var fileName = FS.ReplaceInvalidFileNameChars(value);
+        fileName = FS.Combine(appDataCachePath, SH.AppendIfDontEndingWith(fileName, AllExtensions.html));
+        return await DownloadOrReadWorker(logger, fileName, uri);
     }
+
+    /// <summary>
+    /// Checks if a page exists at the specified URL
+    /// </summary>
+    /// <param name="url">The URL to check</param>
+    /// <returns>True if the page exists (HTTP 200 OK), false otherwise</returns>
     public static bool ExistsPage(string url)
     {
         try
         {
-            //Creating the HttpWebRequest
             HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-            //Setting the Request method HEAD, you can also use GET too.
             request.Method = "HEAD";
-            //Getting the Web Response.
             HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-            //Returns TRUE if the Status code == 200
             response.Close();
             return (response.StatusCode == HttpStatusCode.OK);
         }
         catch
         {
-            //Any exception will returns false.
             return false;
         }
     }
-    public static bool IsNotFound(ILogger logger, GetResponseArgs a, object uri)
-    {
-        HttpWebResponse r;
-        var test = GetResponseText(logger, a, uri.ToString(), HttpMethod.Get, null, out r);
-        return HttpResponseHelper.IsNotFound(r);
-    }
-    public static bool SomeError(ILogger logger, GetResponseArgs a, object uri)
-    {
-        HttpWebResponse r;
-        var test = GetResponseText(logger, a, uri.ToString(), HttpMethod.Get, null, out r);
-        return HttpResponseHelper.SomeError(r);
-    }
+
     /// <summary>
-    /// A2 can be null (if dont have duplicated extension, set null)
+    /// Checks if the resource at the specified URI was not found
     /// </summary>
-    /// <param name="hrefs"></param>
-    /// <param name="DontHaveAllowedExtension"></param>
-    /// <param name="folder2"></param>
-    /// <param name="co"></param>
-    /// <param name="ext"></param>
-    public static async Task DownloadAll(ILogger logger, GetResponseArgs a, List<string> hrefs, Func<string, bool> DontHaveAllowedExtension, string folder2, FileMoveCollisionOptionHttp co, string ext = null)
+    /// <param name="logger">The logger instance</param>
+    /// <param name="args">The response retrieval arguments</param>
+    /// <param name="uri">The URI to check</param>
+    /// <returns>True if resource was not found, false otherwise</returns>
+    public static bool IsNotFound(ILogger logger, GetResponseArgs args, object uri)
     {
-        if (co != FileMoveCollisionOptionHttp.Overwrite)
+        HttpWebResponse response;
+        var test = GetResponseText(logger, args, uri.ToString(), HttpMethod.Get, null, out response);
+        return HttpResponseHelper.IsNotFound(response);
+    }
+
+    /// <summary>
+    /// Checks if there was an error accessing the specified URI
+    /// </summary>
+    /// <param name="logger">The logger instance</param>
+    /// <param name="args">The response retrieval arguments</param>
+    /// <param name="uri">The URI to check</param>
+    /// <returns>True if there was an error, false otherwise</returns>
+    public static bool SomeError(ILogger logger, GetResponseArgs args, object uri)
+    {
+        HttpWebResponse response;
+        var test = GetResponseText(logger, args, uri.ToString(), HttpMethod.Get, null, out response);
+        return HttpResponseHelper.SomeError(response);
+    }
+
+    /// <summary>
+    /// Downloads all files from the specified hrefs
+    /// </summary>
+    /// <param name="logger">The logger instance</param>
+    /// <param name="args">The response retrieval arguments</param>
+    /// <param name="hrefs">The list of URIs to download</param>
+    /// <param name="dontHaveAllowedExtension">Function to check if extension is not allowed (can be null)</param>
+    /// <param name="folder2">The destination folder</param>
+    /// <param name="collisionOption">The file move collision option</param>
+    /// <param name="ext">The file extension (can be null)</param>
+    public static async Task DownloadAll(ILogger logger, GetResponseArgs args, List<string> hrefs, Func<string, bool> dontHaveAllowedExtension, string folder2, FileMoveCollisionOptionHttp collisionOption, string ext = null)
+    {
+        if (collisionOption != FileMoveCollisionOptionHttp.Overwrite)
         {
             ThrowEx.Custom("Is allowed only Overwrite. Due to deps FS.MoveFile is not possible to use.");
         }
         foreach (var item in hrefs)
         {
             var tempPath = FS.GetTempFilePath();
-            await Download(logger, a, item, DontHaveAllowedExtension, tempPath);
+            await Download(logger, args, item, dontHaveAllowedExtension, tempPath);
             var to = FS.Combine(folder2, Path.GetFileName(item) + ext);
             File.Move(tempPath, to, true);
         }
     }
+
     /// <summary>
-    /// A2 can be null (if dont have duplicated extension, set null)
+    /// Downloads a file from the specified href
     /// In earlier time return ext
     /// Now return whether was downloaded
     /// </summary>
-    /// <param name = "href"></param>
-    /// <param name = "DontHaveAllowedExtension"></param>
-    /// <param name = "folder2"></param>
-    /// <param name = "fn"></param>
-    /// <param name = "ext"></param>
-    public static async Task<bool> Download(ILogger logger, GetResponseArgs a, string href, Func<string, bool> DontHaveAllowedExtension, string folder2, string fn, string ext = null)
+    /// <param name="logger">The logger instance</param>
+    /// <param name="args">The response retrieval arguments</param>
+    /// <param name="href">The URI to download from</param>
+    /// <param name="dontHaveAllowedExtension">Function to check if extension is not allowed (can be null)</param>
+    /// <param name="folder2">The destination folder</param>
+    /// <param name="fileName">The file name</param>
+    /// <param name="ext">The file extension (can be null)</param>
+    /// <returns>True if file was downloaded, false if already exists</returns>
+    public static async Task<bool> Download(ILogger logger, GetResponseArgs args, string href, Func<string, bool> dontHaveAllowedExtension, string folder2, string fileName, string ext = null)
     {
-        if (DontHaveAllowedExtension != null)
+        if (dontHaveAllowedExtension != null)
         {
-            if (DontHaveAllowedExtension(ext))
+            if (dontHaveAllowedExtension(ext))
             {
                 ext += ".jpeg";
             }
@@ -119,50 +152,60 @@ public static partial class HttpRequestHelper
             ext = FS.GetExtension(href);
             ext = SHParts.RemoveAfterFirst(ext, "?");
         }
-        fn = SHParts.RemoveAfterFirst(fn, "?");
-        string path = FS.Combine(folder2, fn + ext);
+        fileName = SHParts.RemoveAfterFirst(fileName, "?");
+        string path = FS.Combine(folder2, fileName + ext);
         FS.CreateFoldersPsysicallyUnlessThere(folder2);
         if (!FS.ExistsFile(path) || FS.GetFileSize(path) == 0)
         {
-            var count = await GetResponseBytes(logger, a, href, HttpMethod.Get);
+            var count = await GetResponseBytes(logger, args, href, HttpMethod.Get);
             TF.WriteAllBytes(path, count);
             return true;
         }
         return false;
     }
+
     /// <summary>
+    /// Downloads a file to the specified path
     /// In earlier time return ext
     /// Now return whether was downloaded
     /// </summary>
-    /// <param name="uri"></param>
-    /// <param name="DontHaveAllowedExtension"></param>
-    /// <param name="path"></param>
-    /// <returns></returns>
-    public static async Task<bool> Download(ILogger logger, GetResponseArgs a, string uri, Func<string, bool> DontHaveAllowedExtension, string path)
+    /// <param name="logger">The logger instance</param>
+    /// <param name="args">The response retrieval arguments</param>
+    /// <param name="uri">The URI to download from</param>
+    /// <param name="dontHaveAllowedExtension">Function to check if extension is not allowed (can be null)</param>
+    /// <param name="path">The destination file path</param>
+    /// <returns>True if file was downloaded, false if already exists</returns>
+    public static async Task<bool> Download(ILogger logger, GetResponseArgs args, string uri, Func<string, bool> dontHaveAllowedExtension, string path)
     {
-        string parameter, fn, ext;
-        FS.GetPathAndFileNameWithoutExtension(path, out parameter, out fn, out ext);
-        return await Download(logger, a, uri, DontHaveAllowedExtension, parameter, fn, Path.GetExtension(path));
+        string parameter, fileName, ext;
+        FS.GetPathAndFileNameWithoutExtension(path, out parameter, out fileName, out ext);
+        return await Download(logger, args, uri, dontHaveAllowedExtension, parameter, fileName, Path.GetExtension(path));
     }
-    public static IProgressBarHttp clpb = null;
+
     /// <summary>
-    /// A2 can be null (if dont have duplicated extension, set null)
+    /// Gets or sets the progress bar for HTTP operations
+    /// </summary>
+    public static IProgressBarHttp ProgressBar { get; set; } = null;
+
+    /// <summary>
+    /// Downloads a file from the specified href with timeout
     /// In earlier time return ext
     /// Now return whether was downloaded
     /// </summary>
-    /// <param name = "href"></param>
-    /// <param name = "DontHaveAllowedExtension"></param>
-    /// <param name = "folder2"></param>
-    /// <param name = "fn"></param>
-    /// <param name = "ext"></param>
-    public static async Task<bool> Download(ILogger logger, GetResponseArgs a, string href, Func<string, bool> DontHaveAllowedExtension, string folder2, string fn, int timeoutInMs, string ext = null)
+    /// <param name="logger">The logger instance</param>
+    /// <param name="args">The response retrieval arguments</param>
+    /// <param name="href">The URI to download from</param>
+    /// <param name="dontHaveAllowedExtension">Function to check if extension is not allowed (can be null)</param>
+    /// <param name="folder2">The destination folder</param>
+    /// <param name="fileName">The file name</param>
+    /// <param name="timeoutInMs">The timeout in milliseconds</param>
+    /// <param name="ext">The file extension (can be null)</param>
+    /// <returns>True if file was downloaded, false if already exists</returns>
+    public static async Task<bool> Download(ILogger logger, GetResponseArgs args, string href, Func<string, bool> dontHaveAllowedExtension, string folder2, string fileName, int timeoutInMs, string ext = null)
     {
-        // TODO: měl jsem tu arg , string fullPathForCompare
-        // zkontrolovat zda se tu ta cesta skládá správně
-        // přidání nového arg do prostřed to zurví spoustu dalšího kódu
-        if (DontHaveAllowedExtension != null)
+        if (dontHaveAllowedExtension != null)
         {
-            if (DontHaveAllowedExtension(ext))
+            if (dontHaveAllowedExtension(ext))
             {
                 ext += ".jpeg";
             }
@@ -172,16 +215,12 @@ public static partial class HttpRequestHelper
             ext = Path.GetExtension(href);
             ext = SHParts.RemoveAfterFirst(ext, "?");
         }
-        fn = SHParts.RemoveAfterFirst(fn, "?");
-        string path = Path.Combine(folder2, fn + ext);
-        //if (path != fullPathForCompare)
-        //{
-        //    System.Diagnostics.Debugger.Break();
-        //}
+        fileName = SHParts.RemoveAfterFirst(fileName, "?");
+        string path = Path.Combine(folder2, fileName + ext);
         FS.CreateFoldersPsysicallyUnlessThere(folder2);
         if (!File.Exists(path) || new FileInfo(path).Length == 0)
         {
-            var count = await GetResponseBytes(logger, a, href, HttpMethod.Get, timeoutInMs);
+            var count = await GetResponseBytes(logger, args, href, HttpMethod.Get, timeoutInMs);
             if (count.Length != 0)
             {
                 await File.WriteAllBytesAsync(path, count);
@@ -190,25 +229,14 @@ public static partial class HttpRequestHelper
         }
         return false;
     }
+
+    /// <summary>
+    /// Creates a short path from URI for caching purposes
+    /// </summary>
+    /// <param name="text">The URI text</param>
+    /// <returns>The shortened path suitable for file names</returns>
     static string ShortPathFromUri(string text)
     {
-        #region Nefungovalo, furt to bylo příliš dlouhé
-        //s = SHParts.KeepAfterFirst(text, "://");
-        //s = SHParts.KeepAfterFirst(text, "www.");
-        //// Abych ušetřil ještě nějaké místo, nebudu vkládat ani host
-        //s = SHParts.KeepAfterFirst(text, "/");
-        /*
-         * Z nějakého důvodu, když to dekóduji, tak mi count# nedokáže zapsat soubor text tímto názvem
-         * Ale VSCode to zvládne value pohodě: \\?\D:\Documents\sunamo\ConsoleApp1\Cache\sprodejdomycena-do-1000000moravskoslezsky-krajs-qc[usableAreaMin]=40&s-qc[ownership][0]=personal&s-qc[condition][0]=new&s-qc[condition][1]=good-condition&s-qc[condition][2]=maintained&s-qc[condition][3]=after-reconstruction.html
-         * Píše to že část cesty neexistuje ale žádné \ ani / value tom není a D:\Documents\sunamo\ConsoleApp1\Cache\ existuje
-         *
-         * Kdybych měl text tím znovu problemy, udělat to že string se převede na hash
-         * Případně že se zapíšou jen hodnoty parametrů, nikoliv jejich názvy, oddělené ,
-         * */
-        //s = UH.UrlDecode(text);
-        //s = FS.ReplaceInvalidFileNameChars(text);
-        #endregion
-        #region Část kódu kretá se používala když jsem vracel fn
         var value = UH.GetFileNameWithoutExtension(text);
         var qs = new Uri(text).Query;
         StringBuilder stringBuilder = new StringBuilder();
@@ -218,15 +246,20 @@ public static partial class HttpRequestHelper
             stringBuilder.Append(item.Split('=')[1] + ",");
         }
         text = FS.ReplaceInvalidFileNameChars(value + stringBuilder.ToString());
-        #endregion
         return text;
     }
-    public static string BeforeTestingIpAddress(string vr)
+
+    /// <summary>
+    /// Normalizes IP address before testing (converts ::1 to 127.0.0.1)
+    /// </summary>
+    /// <param name="ipAddress">The IP address to normalize</param>
+    /// <returns>The normalized IP address</returns>
+    public static string BeforeTestingIpAddress(string ipAddress)
     {
-        if (vr == "::1")
+        if (ipAddress == "::1")
         {
-            vr = "127.0.0.1";
+            ipAddress = "127.0.0.1";
         }
-        return vr;
+        return ipAddress;
     }
 }

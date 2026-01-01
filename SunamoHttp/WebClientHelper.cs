@@ -1,24 +1,43 @@
 namespace SunamoHttp;
 
+/// <summary>
+/// Helper class for WebClient operations
+/// </summary>
 public class WebClientHelper
 {
-    static SunamoWebClient swc = new SunamoWebClient();
+    private static SunamoWebClient sunamoWebClient = new SunamoWebClient();
 
-    public static string GetResponseText(string address, HttpRequestData hrd)
+    /// <summary>
+    /// Gets the response text from the specified address
+    /// </summary>
+    /// <param name="address">The URL address</param>
+    /// <param name="httpRequestData">The HTTP request configuration data</param>
+    /// <returns>The response text with spaces normalized</returns>
+    public static string GetResponseText(string address, HttpRequestData httpRequestData)
     {
-        swc.hrd = hrd;
-        return swc.DownloadString(address).FromSpace160To32();
+        sunamoWebClient.HttpRequestData = httpRequestData;
+        return sunamoWebClient.DownloadString(address).FromSpace160To32();
     }
 
+    /// <summary>
+    /// Gets the response bytes from the specified address
+    /// </summary>
+    /// <param name="address">The URL address</param>
+    /// <returns>The response as byte array</returns>
     public static byte[] GetResponseBytes(string address)
     {
-        return swc.DownloadData(address);
+        return sunamoWebClient.DownloadData(address);
     }
 
-    static WebClient wc = new WebClient();
+    private static WebClient webClient = new WebClient();
 
+    /// <summary>
+    /// Gets the response stream from the specified address
+    /// </summary>
+    /// <param name="address">The URL address</param>
+    /// <returns>The response stream</returns>
     public static Stream GetResponseStream(string address)
     {
-        return wc.OpenRead(address);
+        return webClient.OpenRead(address);
     }
 }

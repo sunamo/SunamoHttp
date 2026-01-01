@@ -1,9 +1,7 @@
 namespace SunamoHttp._sunamo.SunamoFileExtensions;
 
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 /// <summary>
-///     Use Generate for AllExtensions when is adding more than 1 new extension
+/// File extension constants - use Generate for AllExtensions when adding more than 1 new extension
 /// </summary>
 internal partial class AllExtensions
 {
@@ -36,7 +34,7 @@ internal partial class AllExtensions
     [TypeOfExtension(TypeOfExtension.configText)]
     internal const string prettierrc = ".prettierrc";
     /// <summary>
-    ///     ano, vcf je opravdu textový soubor
+    /// VCF is indeed a text file
     /// </summary>
     [TypeOfExtension(TypeOfExtension.contentText)]
     internal const string vcf = ".vcf";
@@ -119,7 +117,7 @@ internal partial class AllExtensions
     [TypeOfExtension(TypeOfExtension.resource)]
     internal const string resx = ".resx";
     /// <summary>
-    ///     vs export = xml
+    /// Visual Studio export format (XML-based)
     /// </summary>
     [TypeOfExtension(TypeOfExtension.settingsText)]
     internal const string settings = ".settings";

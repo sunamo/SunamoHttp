@@ -1,17 +1,27 @@
 namespace SunamoHttp;
 
 /// <summary>
-/// Pokud chceš náhradu za třídu HttpRequestHelper, použij
+/// Helper class for HttpClient operations
+/// If you want a replacement for the HttpRequestHelper class, use this
 /// </summary>
 public class HttpClientHelper
 {
-    public static HttpClient hc = new HttpClient();
+    /// <summary>
+    /// Gets or sets the shared HttpClient instance
+    /// </summary>
+    public static HttpClient HttpClientInstance { get; set; } = new HttpClient();
+
     private HttpClientHelper()
     {
     }
-    public static HttpResponseMessage httpResponseMessage = null;
 
     /// <summary>
+    /// Gets or sets the last HTTP response message
+    /// </summary>
+    public static HttpResponseMessage HttpResponseMessage { get; set; } = null;
+
+    /// <summary>
+    /// Gets the response text from the specified address
     /// Return always HttpResponseMessage, can't return HttpWebResponse
     /// Same url:
     /// HttpClientHelper.GetResponseText - Exception: The remote server returned an error: (400) Bad Request., response is null
@@ -19,49 +29,62 @@ public class HttpClientHelper
     /// Pros: Better is HttpClientHelper because I can parse error
     /// Cons: HttpClientHelper.GetResponseText not return HttpWebResponse object, only HttpResponseMessage
     /// </summary>
-    /// <param name="address"></param>
-    /// <param name="method"></param>
-    /// <param name="hrd"></param>
-    /// <returns></returns>
+    /// <param name="address">The URL address</param>
+    /// <param name="method">The HTTP method</param>
+    /// <param name="httpRequestData">The HTTP request configuration data</param>
+    /// <returns>The response text</returns>
     public static
 #if ASYNC
 async Task<string>
 #else
 string
 #endif
-GetResponseText(string address, HttpMethod method, HttpRequestData hrd = null)
+GetResponseText(string address, HttpMethod method, HttpRequestData httpRequestData = null)
     {
-        httpResponseMessage =
+        HttpResponseMessage =
 #if ASYNC
             await
 #endif
-            GetResponse(address, method, hrd);
-        return await GetResponseText(httpResponseMessage);
+            GetResponse(address, method, httpRequestData);
+        return await GetResponseText(HttpResponseMessage);
     }
+
+    /// <summary>
+    /// Gets the response text from the HTTP response message
+    /// </summary>
+    /// <param name="response">The HTTP response message</param>
+    /// <returns>The response text with spaces normalized</returns>
     private static async Task<string> GetResponseText(HttpResponseMessage response)
     {
-        string vr = "";
+        string responseText = "";
         using (response)
         {
             // Must be await, not AsyncHelper, not .Result, otherwise will be frozen
-            //vr =  AsyncHelper.ci.GetResult<string>( response.Content.ReadAsStringAsync());
-            vr = (await response.Content.ReadAsStringAsync()).FromSpace160To32();
+            responseText = (await response.Content.ReadAsStringAsync()).FromSpace160To32();
         }
-        return vr;
+        return responseText;
     }
+
+    /// <summary>
+    /// Gets the response stream from the specified address
+    /// </summary>
+    /// <param name="address">The URL address</param>
+    /// <param name="method">The HTTP method</param>
+    /// <param name="httpRequestData">The HTTP request configuration data</param>
+    /// <returns>The response stream</returns>
     public static
 #if ASYNC
 async Task<Stream>
 #else
   Stream
 #endif
-GetResponseStream(string address, HttpMethod method, HttpRequestData hrd)
+GetResponseStream(string address, HttpMethod method, HttpRequestData httpRequestData)
     {
         HttpResponseMessage response =
 #if ASYNC
             await
 #endif
-            GetResponse(address, method, hrd);
+            GetResponse(address, method, httpRequestData);
         using (response)
         {
 #if ASYNC
@@ -75,80 +98,79 @@ response.Content.ReadAsStreamAsync();
 #endif
         }
     }
+
     /// <summary>
-    /// A3 can be null
+    /// Gets the HTTP response from the specified address
     /// Return always HttpResponseMessage, can't return HttpWebResponse
     /// </summary>
-    /// <param name="address"></param>
-    /// <param name="method"></param>
-    /// <param name="hrd"></param>
-    /// <returns></returns>
+    /// <param name="address">The URL address</param>
+    /// <param name="method">The HTTP method</param>
+    /// <param name="httpRequestData">The HTTP request configuration data (can be null)</param>
+    /// <returns>The HTTP response message</returns>
     public static
 #if ASYNC
     async Task<HttpResponseMessage>
 #else
     HttpResponseMessage
 #endif
-        GetResponse(string address, HttpMethod method, HttpRequestData hrd = null)
+        GetResponse(string address, HttpMethod method, HttpRequestData httpRequestData = null)
     {
-        if (hrd == null)
+        if (httpRequestData == null)
         {
-            hrd = new HttpRequestData();
+            httpRequestData = new HttpRequestData();
         }
-        SetHttpHeaders(hrd, hc);
-        string adressCopy = address;
-        #region Do samostatné metody pokud bych to někdy potřeboval, post neznamená že požadavek nemůže mít query string
-        #endregion
-        HttpContent httpContent = hrd.content;
+        SetHttpHeaders(httpRequestData, HttpClientInstance);
+        string addressCopy = address;
+
+        HttpContent httpContent = httpRequestData.Content;
         HttpResponseMessage response = null;
         if (method == HttpMethod.Get)
         {
             response =
 #if ASYNC
-                await hc.GetAsync(address);
+                await HttpClientInstance.GetAsync(address);
 #else
-                hc.GetAsync(address).Result;
+                HttpClientInstance.GetAsync(address).Result;
 #endif
         }
         else if (method == HttpMethod.Post)
         {
-            var resp = hc.PostAsync(address, httpContent);
+            var responseTask = HttpClientInstance.PostAsync(address, httpContent);
 #if ASYNC
-            response = await resp;
+            response = await responseTask;
 #else
-            response = resp.Result;
+            response = responseTask.Result;
 #endif
         }
-        else
-        {
-        }
-        //HttpResponseMessage response = responseTask.Result;
+
         return response;
     }
-    static Type type = typeof(HttpClientHelper);
-    private static void SetHttpHeaders(HttpRequestData hrd, HttpClient hc)
+
+    /// <summary>
+    /// Sets HTTP headers on the HttpClient instance
+    /// </summary>
+    /// <param name="httpRequestData">The HTTP request configuration data</param>
+    /// <param name="httpClient">The HttpClient instance</param>
+    private static void SetHttpHeaders(HttpRequestData httpRequestData, HttpClient httpClient)
     {
-        if (hc == null)
+        if (httpClient == null)
         {
-            hc = new HttpClient();
+            httpClient = new HttpClient();
         }
 
-        //request.UserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11";
-        //hc.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36");
-
-        if (hrd.accept != null)
+        if (httpRequestData.Accept != null)
         {
-            hc.DefaultRequestHeaders.Add(HttpKnownHeaderNames.Accept, hrd.accept);
+            httpClient.DefaultRequestHeaders.Add(HttpKnownHeaderNames.Accept, httpRequestData.Accept);
         }
-        if (hrd.keepAlive.HasValue)
+        if (httpRequestData.KeepAlive.HasValue)
         {
-            hc.DefaultRequestHeaders.Add(HttpKnownHeaderNames.KeepAlive, hrd.keepAlive.ToString());
+            httpClient.DefaultRequestHeaders.Add(HttpKnownHeaderNames.KeepAlive, httpRequestData.KeepAlive.ToString());
         }
-        if (hrd != null)
+        if (httpRequestData != null)
         {
-            foreach (var item in hrd.headers)
+            foreach (var item in httpRequestData.Headers)
             {
-                hc.DefaultRequestHeaders.Add(item.Key, item.Value);
+                httpClient.DefaultRequestHeaders.Add(item.Key, item.Value);
             }
         }
     }

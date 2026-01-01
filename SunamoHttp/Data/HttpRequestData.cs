@@ -1,38 +1,58 @@
 namespace SunamoHttp.Data;
 
+/// <summary>
+/// HTTP request configuration data
+/// </summary>
 public class HttpRequestData
 {
-    public string accept = null;
+    /// <summary>
+    /// Gets or sets the Accept header value
+    /// </summary>
+    public string Accept { get; set; } = null;
 
+    /// <summary>
+    /// Gets or sets the HTTP content for the request
+    /// Assign: StreamContent, ByteArrayContent, FormUrlEncodedContent, StringContent, MultipartContent, MultipartFormDataContent
+    /// </summary>
+    public HttpContent Content { get; set; } = null;
 
-    public HttpContent content = null;
-    public string contentType = null;
-    public Encoding encodingPostData;
+    /// <summary>
+    /// Gets or sets the Content-Type header value
+    /// </summary>
+    public string ContentType { get; set; } = null;
 
+    /// <summary>
+    /// Gets or sets the encoding for POST data
+    /// </summary>
+    public Encoding EncodingPostData { get; set; }
 
-    public Encoding forcedEncoding = null;
+    /// <summary>
+    /// Gets or sets the forced encoding for response
+    /// </summary>
+    public Encoding ForcedEncoding { get; set; } = null;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to force specific encoding
+    /// </summary>
+    public bool? ForceEncoding { get; set; } = false;
 
-    public bool? forceEndoding = false;
-    public Dictionary<string, string> headers = new();
+    /// <summary>
+    /// Gets or sets the custom HTTP headers
+    /// </summary>
+    public Dictionary<string, string> Headers { get; set; } = new();
 
-    public bool? keepAlive = null;
-    public bool throwEx = true;
-    public int timeoutInS = 60;
+    /// <summary>
+    /// Gets or sets a value indicating whether to keep the connection alive
+    /// </summary>
+    public bool? KeepAlive { get; set; } = null;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to throw exceptions on errors
+    /// </summary>
+    public bool ThrowEx { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the timeout in seconds
+    /// </summary>
+    public int TimeoutInS { get; set; } = 60;
 }
-
-//namespace SunamoHttp.Code;
-///// Here it cant be, is already in SunamoHttp.standard and even if I not directly reference SunamoHttp.standard, VS see it
-//public class HttpRequestDataHttp
-//{
-//    public Dictionary<string, string> headers = new Dictionary<string, string>();
-//    public string contentType = null;
-//    public string accept = null;
-//    public Encoding encodingPostData;
-//    //public int? timeout = null; // Není v třídě HttpKnownHeaderNames
-//    public bool? keepAlive = null;
-//    /// <summary>
-//    /// Assign: StreamContent,ByteArrayContent,FormUrlEncodedContent,StringContent,MultipartContent,MultipartFormDataContent
-//    /// </summary>
-//    public HttpContent content = null;
-//}

@@ -1,14 +1,28 @@
 namespace SunamoHttp._sunamo.SunamoExceptions;
 
-// © www.sunamo.cz. All Rights Reserved.
+/// <summary>
+/// Exception helper methods
+/// © www.sunamo.cz. All Rights Reserved.
+/// </summary>
 internal sealed partial class Exceptions
 {
     #region Other
+    /// <summary>
+    /// Checks the before parameter and formats it
+    /// </summary>
+    /// <param name="before">The before text</param>
+    /// <returns>The formatted before text with colon, or empty string</returns>
     internal static string CheckBefore(string before)
     {
         return string.IsNullOrWhiteSpace(before) ? string.Empty : before + ": ";
     }
 
+    /// <summary>
+    /// Gets the text of all exception messages
+    /// </summary>
+    /// <param name="ex">The exception</param>
+    /// <param name="alsoInner">Whether to include inner exceptions</param>
+    /// <returns>The formatted exception text</returns>
     internal static string TextOfExceptions(Exception ex, bool alsoInner = true)
     {
         if (ex == null) return string.Empty;
@@ -25,24 +39,28 @@ internal sealed partial class Exceptions
         return result;
     }
 
-    internal static Tuple<string, string, string> PlaceOfException(
-bool fillAlsoFirstTwo = true)
+    /// <summary>
+    /// Gets the place of exception from stack trace
+    /// </summary>
+    /// <param name="isFillAlsoFirstTwo">Whether to fill also first two items</param>
+    /// <returns>Tuple of type, method name, and stack trace</returns>
+    internal static Tuple<string, string, string> PlaceOfException(bool isFillAlsoFirstTwo = true)
     {
-        StackTrace st = new();
-        var value = st.ToString();
+        StackTrace stackTrace = new();
+        var value = stackTrace.ToString();
         var lines = value.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
         lines.RemoveAt(0);
-        var i = 0;
+        var currentIndex = 0;
         string type = string.Empty;
         string methodName = string.Empty;
-        for (; i < lines.Count; i++)
+        for (; currentIndex < lines.Count; currentIndex++)
         {
-            var item = lines[i];
-            if (fillAlsoFirstTwo)
+            var item = lines[currentIndex];
+            if (isFillAlsoFirstTwo)
                 if (!item.StartsWith("   at ThrowEx"))
                 {
                     TypeAndMethodName(item, out type, out methodName);
-                    fillAlsoFirstTwo = false;
+                    isFillAlsoFirstTwo = false;
                 }
             if (item.StartsWith("at System."))
             {
@@ -53,19 +71,32 @@ bool fillAlsoFirstTwo = true)
         }
         return new Tuple<string, string, string>(type, methodName, string.Join(Environment.NewLine, lines));
     }
-    internal static void TypeAndMethodName(string lines, out string type, out string methodName)
+
+    /// <summary>
+    /// Extracts type and method name from stack trace line
+    /// </summary>
+    /// <param name="stackTraceLine">The stack trace line</param>
+    /// <param name="type">Output parameter for the type name</param>
+    /// <param name="methodName">Output parameter for the method name</param>
+    internal static void TypeAndMethodName(string stackTraceLine, out string type, out string methodName)
     {
-        var s2 = lines.Split("at ")[1].Trim();
-        var text = s2.Split("(")[0];
-        var parameter = text.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-        methodName = parameter[^1];
-        parameter.RemoveAt(parameter.Count - 1);
-        type = string.Join(".", parameter);
+        var trimmedLine = stackTraceLine.Split("at ")[1].Trim();
+        var fullMethodPath = trimmedLine.Split("(")[0];
+        var pathParts = fullMethodPath.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+        methodName = pathParts[^1];
+        pathParts.RemoveAt(pathParts.Count - 1);
+        type = string.Join(".", pathParts);
     }
-    internal static string CallingMethod(int value = 1)
+
+    /// <summary>
+    /// Gets the calling method name
+    /// </summary>
+    /// <param name="frameIndex">The frame index in stack trace (default 1)</param>
+    /// <returns>The method name, or error message if cannot be retrieved</returns>
+    internal static string CallingMethod(int frameIndex = 1)
     {
         StackTrace stackTrace = new();
-        var methodBase = stackTrace.GetFrame(value)?.GetMethod();
+        var methodBase = stackTrace.GetFrame(frameIndex)?.GetMethod();
         if (methodBase == null)
         {
             return "Method name cannot be get";
@@ -76,7 +107,15 @@ bool fillAlsoFirstTwo = true)
     #endregion
 
     #region IsNullOrWhitespace
-    internal static string? IsNullOrWhitespace(string before, string argName, string argValue, bool notAllowOnlyWhitespace)
+    /// <summary>
+    /// Checks if the argument is null or whitespace
+    /// </summary>
+    /// <param name="before">The before text</param>
+    /// <param name="argName">The argument name</param>
+    /// <param name="argValue">The argument value</param>
+    /// <param name="isNotAllowOnlyWhitespace">Whether to not allow only whitespace</param>
+    /// <returns>The error message, or null if valid</returns>
+    internal static string? IsNullOrWhitespace(string before, string argName, string argValue, bool isNotAllowOnlyWhitespace)
     {
         string addParams;
         if (argValue == null)
@@ -89,30 +128,49 @@ bool fillAlsoFirstTwo = true)
             addParams = AddParams();
             return CheckBefore(before) + argName + " is empty (without trim)" + addParams;
         }
-        if (notAllowOnlyWhitespace && argValue.Trim() == string.Empty)
+        if (isNotAllowOnlyWhitespace && argValue.Trim() == string.Empty)
         {
             addParams = AddParams();
             return CheckBefore(before) + argName + " is empty (with trim)" + addParams;
         }
         return null;
     }
-    readonly static StringBuilder sbAdditionalInfoInner = new();
-    readonly static StringBuilder sbAdditionalInfo = new();
+
+    /// <summary>
+    /// Gets or sets the inner additional info string builder
+    /// </summary>
+    internal readonly static StringBuilder AdditionalInfoInnerStringBuilder = new();
+
+    /// <summary>
+    /// Gets or sets the additional info string builder
+    /// </summary>
+    internal readonly static StringBuilder AdditionalInfoStringBuilder = new();
+
+    /// <summary>
+    /// Adds additional parameters to error message
+    /// </summary>
+    /// <returns>The formatted additional parameters</returns>
     internal static string AddParams()
     {
-        sbAdditionalInfo.Insert(0, Environment.NewLine);
-        sbAdditionalInfo.Insert(0, "Outer:");
-        sbAdditionalInfo.Insert(0, Environment.NewLine);
-        sbAdditionalInfoInner.Insert(0, Environment.NewLine);
-        sbAdditionalInfoInner.Insert(0, "Inner:");
-        sbAdditionalInfoInner.Insert(0, Environment.NewLine);
-        var addParams = sbAdditionalInfo.ToString();
-        var addParamsInner = sbAdditionalInfoInner.ToString();
+        AdditionalInfoStringBuilder.Insert(0, Environment.NewLine);
+        AdditionalInfoStringBuilder.Insert(0, "Outer:");
+        AdditionalInfoStringBuilder.Insert(0, Environment.NewLine);
+        AdditionalInfoInnerStringBuilder.Insert(0, Environment.NewLine);
+        AdditionalInfoInnerStringBuilder.Insert(0, "Inner:");
+        AdditionalInfoInnerStringBuilder.Insert(0, Environment.NewLine);
+        var addParams = AdditionalInfoStringBuilder.ToString();
+        var addParamsInner = AdditionalInfoInnerStringBuilder.ToString();
         return addParams + addParamsInner;
     }
     #endregion
 
-    #region OnlyReturnString 
+    #region OnlyReturnString
+    /// <summary>
+    /// Creates a custom exception message
+    /// </summary>
+    /// <param name="before">The before text</param>
+    /// <param name="message">The message</param>
+    /// <returns>The formatted exception message</returns>
     internal static string? Custom(string before, string message)
     {
         return CheckBefore(before) + message;

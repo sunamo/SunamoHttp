@@ -1,6 +1,3 @@
 namespace SunamoHttp.Args;
-//namespace SunamoHttp.Args;
-//public class GetResponseArgs : GetResponseArgs
-//{
 
-//}
+// This file intentionally left empty - placeholder for future use

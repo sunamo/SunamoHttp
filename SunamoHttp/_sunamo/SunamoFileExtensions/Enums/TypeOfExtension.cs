@@ -1,3 +1,4 @@
+// variables names: ok
 namespace SunamoHttp._sunamo.SunamoFileExtensions.Enums;
 
 internal enum TypeOfExtension
@@ -10,39 +11,39 @@ internal enum TypeOfExtension
     database,
 
     /// <summary>
-    ///     prošel jsem zda v AllExtension jsou všechny textové
+    ///     Verified that all extensions in AllExtension are text-based
     /// </summary>
     configText,
 
     /// <summary>
-    ///     XML, JSON, mdf, ldf, sdf, atd.
+    ///     XML, JSON, mdf, ldf, sdf, etc.
     ///     Can't name data because is difficult search (exists also database)
     /// </summary>
     contentText,
     contentBinary,
 
     /// <summary>
-    ///     prošel jsem zda v AllExtension jsou všechny textové
-    ///     ini, atd.
+    ///     Verified that all extensions in AllExtension are text-based
+    ///     ini, etc.
     /// </summary>
     settingsText,
 
     /// <summary>
-    ///     prošel jsem zda v AllExtension jsou všechny textové
+    ///     Verified that all extensions in AllExtension are text-based
     /// </summary>
     visual_studioText,
     executable,
     binary,
 
     /// <summary>
-    ///     u resourců by to asi tak nevadilo kdyby byly zakódovany třeba ve b64 ale pro jistotu je všechny řadím do binárních
-    ///     ať je nepoškodím
+    ///     For resources, it probably wouldn't hurt if they were encoded in base64, but to be safe,
+    ///     I classify them all as binary to avoid damaging them
     /// </summary>
     resource,
 
     /// <summary>
-    ///     prošel jsem zda v AllExtension jsou všechny textové
-    ///     sql, cmd, ps1,
+    ///     Verified that all extensions in AllExtension are text-based
+    ///     sql, cmd, ps1, etc.
     /// </summary>
     script,
     font,
@@ -50,8 +51,8 @@ internal enum TypeOfExtension
     temporary,
 
     /// <summary>
-    ///     Is used when extension isn't know
-    ///     U ostatních souborů vypsat jejich popis z windows
+    ///     Is used when extension isn't known
+    ///     For other files, display their description from Windows
     /// </summary>
     other
 }

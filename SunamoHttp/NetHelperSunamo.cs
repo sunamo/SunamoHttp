@@ -1,16 +1,21 @@
 namespace SunamoHttp;
 
+/// <summary>
+/// Network helper utilities for .NET applications
+/// </summary>
 public class NetHelperSunamo
 {
-    //[Obsolete("Do not use this in Production code!!!", true)]
+    /// <summary>
+    /// WARNING: Disables SSL certificate validation - DO NOT USE IN PRODUCTION!
+    /// Disabling certificate validation can expose you to a man-in-the-middle attack
+    /// which may allow your encrypted message to be read by an attacker
+    /// https://stackoverflow.com/a/14907718/740639
+    /// </summary>
     public static void NEVER_EAT_POISON_Disable_CertificateValidation()
     {
-        // Disabling certificate validation can expose you to a man-in-the-middle attack
-        // which may allow your encrypted message to be read by an attacker
-        // https://stackoverflow.com/a/14907718/740639
         ServicePointManager.ServerCertificateValidationCallback =
             delegate (
-                object s,
+                object sender,
                 X509Certificate certificate,
                 X509Chain chain,
                 SslPolicyErrors sslPolicyErrors
@@ -19,13 +24,5 @@ public class NetHelperSunamo
                 return true;
             };
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-        //client.ClientCredentials.ServiceCertificate.SslCertificateAuthentication =
-        //new X509ServiceCertificateAuthentication()
-        //{
-        //    CertificateValidationMode = X509CertificateValidationMode.None,
-        //    RevocationMode = System.Security.Cryptography.X509Certificates.X509RevocationMode.NoCheck
-        //};
     }
-    // callback used to validate the certificate in an SSL conversation
-
 }

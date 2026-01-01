@@ -1,7 +1,12 @@
 namespace SunamoHttp.Args;
 
+/// <summary>
+/// Arguments for HTTP response retrieval
+/// </summary>
 public class GetResponseArgs
 {
-    //public ILogger Logger { get; set; }
+    /// <summary>
+    /// Gets or sets the cookie container for the request
+    /// </summary>
     public CookieContainer Cookies { get; set; }
 }

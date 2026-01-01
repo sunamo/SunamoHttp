@@ -7,25 +7,20 @@ using System.Threading.Tasks;
 
 namespace SunamoHttp.Tests;
 
+/// <summary>
+/// Tests for HttpRequestHelper class
+/// </summary>
 public class HttpRequestHelperTests
 {
+    private ILogger logger = TestLogger.Instance;
+
     [Fact]
     public async Task DownloadOrReadTest()
     {
         AppData.ci.CreateAppFoldersIfDontExists(new SunamoPlatformUwpInterop.Args.CreateAppFoldersIfDontExistsArgs { AppName = "SunamoHttp.Tests" });
 
-        var html = await HttpRequestHelper.DownloadOrRead(TestLogger.Instance, @"https://reality.idnes.cz/s/prodej/domy/okres-kutna-hora/?s-qc%5BusableAreaMin%5D=60&s-qc%5BusableAreaMax%5D=70", AppData.ci.GetFolder(AppFolders.Cache), new DownloadOrReadArgs { forceDownload = false });
+        var html = await HttpRequestHelper.DownloadOrRead(TestLogger.Instance, @"https://reality.idnes.cz/s/prodej/domy/okres-kutna-hora/?s-qc%5BusableAreaMin%5D=60&s-qc%5BusableAreaMax%5D=70", AppData.ci.GetFolder(AppFolders.Cache), new DownloadOrReadArgs { ForceDownload = false });
     }
-
-    ILogger logger = TestLogger.Instance;
-
-    //[Fact]
-    //public async Task DownloadOrReadTest()
-    //{
-    //    AppData.ci.CreateAppFoldersIfDontExists(new SunamoPlatformUwpInterop.Args.CreateAppFoldersIfDontExistsArgs { AppName = "SunamoHttp.Tests" });
-
-    //    HttpRequestHelper.DownloadOrRead(logger, AppData.ci.GetFolder(AppFolders.Cache), uriListing, new DownloadOrReadArgs { forceDownload = true });
-    //}
 
     [Fact]
     public async Task DownloadTest()
