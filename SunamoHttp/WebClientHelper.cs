@@ -13,7 +13,7 @@ public class WebClientHelper
     /// <param name="address">The URL address</param>
     /// <param name="httpRequestData">The HTTP request configuration data</param>
     /// <returns>The response text with spaces normalized</returns>
-    public static string GetResponseText(string address, HttpRequestData httpRequestData)
+    public static string GetResponseText(string address, HttpRequestData? httpRequestData)
     {
         sunamoWebClient.HttpRequestData = httpRequestData;
         return sunamoWebClient.DownloadString(address).FromSpace160To32();

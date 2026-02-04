@@ -8,7 +8,7 @@ public class SunamoWebClient : WebClient
     /// <summary>
     /// Gets or sets the HTTP request data configuration
     /// </summary>
-    public HttpRequestData HttpRequestData { get; set; } = null;
+    public HttpRequestData? HttpRequestData { get; set; } = null;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SunamoWebClient"/> class
@@ -26,7 +26,10 @@ public class SunamoWebClient : WebClient
     protected override WebRequest GetWebRequest(Uri uri)
     {
         WebRequest webRequest = base.GetWebRequest(uri);
-        webRequest.Timeout = HttpRequestData.TimeoutInS * 1000;
+        if (HttpRequestData != null)
+        {
+            webRequest.Timeout = HttpRequestData.TimeoutInS * 1000;
+        }
 
         return webRequest;
     }

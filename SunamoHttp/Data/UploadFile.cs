@@ -16,12 +16,12 @@ public class UploadFile
     /// <summary>
     /// Gets or sets the form field name for the uploaded file
     /// </summary>
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     /// <summary>
     /// Gets or sets the filename of the uploaded file
     /// </summary>
-    public string Filename { get; set; }
+    public string? Filename { get; set; }
 
     /// <summary>
     /// Gets or sets the content type of the uploaded file
@@ -31,5 +31,5 @@ public class UploadFile
     /// <summary>
     /// Gets or sets the stream containing the file data
     /// </summary>
-    public Stream Stream { get; set; }
+    public Stream? Stream { get; set; }
 }

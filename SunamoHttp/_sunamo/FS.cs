@@ -25,7 +25,12 @@ internal class FS
 
         while (true)
         {
-            path = Path.GetDirectoryName(path);
+            var parentPath = Path.GetDirectoryName(path);
+            if (parentPath == null)
+            {
+                break;
+            }
+            path = parentPath;
 
             // TODO: This doesn't work for UWP/UAP apps because they don't have access to the entire disk.
             // Need to determine what UWP/UAP is and how to get/verify any folder on the disk in it
@@ -74,7 +79,7 @@ internal class FS
     /// <returns>The file size in bytes, or 0 if file doesn't exist or error occurs</returns>
     internal static long GetFileSize(string filePath)
     {
-        FileInfo fileInfo = null;
+        FileInfo? fileInfo = null;
         try
         {
             fileInfo = new FileInfo(filePath);
@@ -84,7 +89,7 @@ internal class FS
             // For example, file name is too long
             return 0;
         }
-        if (fileInfo.Exists)
+        if (fileInfo?.Exists == true)
         {
             return fileInfo.Length;
         }

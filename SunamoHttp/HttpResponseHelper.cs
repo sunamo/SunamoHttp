@@ -11,7 +11,7 @@ public class HttpResponseHelper
     /// </summary>
     /// <param name="response">The HTTP response message to check</param>
     /// <returns>True if there is an error (status code is not OK), false otherwise</returns>
-    public static bool SomeError(HttpResponseMessage response)
+    public static bool SomeError(HttpResponseMessage? response)
     {
         if (response == null)
         {
@@ -31,7 +31,7 @@ public class HttpResponseHelper
     /// </summary>
     /// <param name="response">The HTTP web response to check</param>
     /// <returns>True if there is an error (status code is not OK), false otherwise</returns>
-    public static bool SomeError(HttpWebResponse response)
+    public static bool SomeError(HttpWebResponse? response)
     {
         if (response == null)
         {
@@ -51,7 +51,7 @@ public class HttpResponseHelper
     /// </summary>
     /// <param name="response">The HTTP web response to check</param>
     /// <returns>True if the resource was not found, false otherwise</returns>
-    public static bool IsNotFound(HttpWebResponse response)
+    public static bool IsNotFound(HttpWebResponse? response)
     {
         if (response == null)
         {

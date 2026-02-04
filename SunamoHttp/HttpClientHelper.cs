@@ -11,14 +11,15 @@ public class HttpClientHelper
     /// </summary>
     public static HttpClient HttpClientInstance { get; set; } = new HttpClient();
 
+    /// <summary>
+    /// Gets or sets the last HTTP response message
+    /// </summary>
+    public static HttpResponseMessage? HttpResponseMessage { get; set; } = null;
+
     private HttpClientHelper()
     {
     }
 
-    /// <summary>
-    /// Gets or sets the last HTTP response message
-    /// </summary>
-    public static HttpResponseMessage HttpResponseMessage { get; set; } = null;
 
     /// <summary>
     /// Gets the response text from the specified address
@@ -39,13 +40,13 @@ async Task<string>
 #else
 string
 #endif
-GetResponseText(string address, HttpMethod method, HttpRequestData httpRequestData = null)
+GetResponseText(string address, HttpMethod method, HttpRequestData? httpRequestData = null)
     {
         HttpResponseMessage =
 #if ASYNC
             await
 #endif
-            GetResponse(address, method, httpRequestData);
+            GetResponse(address, method, httpRequestData)!;
         return await GetResponseText(HttpResponseMessage);
     }
 
@@ -113,7 +114,7 @@ response.Content.ReadAsStreamAsync();
 #else
     HttpResponseMessage
 #endif
-        GetResponse(string address, HttpMethod method, HttpRequestData httpRequestData = null)
+        GetResponse(string address, HttpMethod method, HttpRequestData? httpRequestData = null)
     {
         if (httpRequestData == null)
         {
@@ -122,8 +123,8 @@ response.Content.ReadAsStreamAsync();
         SetHttpHeaders(httpRequestData, HttpClientInstance);
         string addressCopy = address;
 
-        HttpContent httpContent = httpRequestData.Content;
-        HttpResponseMessage response = null;
+        HttpContent? httpContent = httpRequestData.Content;
+        HttpResponseMessage response;
         if (method == HttpMethod.Get)
         {
             response =
@@ -141,6 +142,10 @@ response.Content.ReadAsStreamAsync();
 #else
             response = responseTask.Result;
 #endif
+        }
+        else
+        {
+            throw new NotSupportedException($"HTTP method {method} is not supported");
         }
 
         return response;

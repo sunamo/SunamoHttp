@@ -18,10 +18,10 @@ internal class SharedAlgorithms
     /// <param name="timeoutMs">Timeout in milliseconds between attempts</param>
     /// <param name="action">The async action to execute</param>
     /// <returns>The result of the operation, or default value if all attempts failed</returns>
-    internal static async Task<Out> RepeatAfterTimeXTimesAsync<Out>(int times, int timeoutMs, Func<Task<Out>> action)
+    internal static async Task<Out?> RepeatAfterTimeXTimesAsync<Out>(int times, int timeoutMs, Func<Task<Out>> action)
     {
         LastError = -1;
-        var result = default(Out);
+        Out? result = default;
         var ok = false;
         for (var i = 0; i < times; i++)
         {

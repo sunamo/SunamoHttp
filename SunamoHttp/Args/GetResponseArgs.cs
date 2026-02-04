@@ -1,3 +1,4 @@
+// variables names: ok
 namespace SunamoHttp.Args;
 
 /// <summary>
@@ -8,5 +9,5 @@ public class GetResponseArgs
     /// <summary>
     /// Gets or sets the cookie container for the request
     /// </summary>
-    public CookieContainer Cookies { get; set; }
+    public CookieContainer? Cookies { get; set; }
 }

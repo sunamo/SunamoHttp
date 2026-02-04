@@ -15,13 +15,13 @@ public static partial class HttpRequestHelper
     /// <param name="uri">The URI to download from</param>
     /// <param name="args">The download or read arguments</param>
     /// <returns>The HTML content</returns>
-    public static async Task<string> DownloadOrReadWorker(ILogger logger, string path, string uri, DownloadOrReadArgs args = null)
+    public static async Task<string> DownloadOrReadWorker(ILogger logger, string path, string uri, DownloadOrReadArgs? args = null)
     {
         if (args == null)
         {
             args = new DownloadOrReadArgs();
         }
-        string html = null;
+        string? html = null;
         if (!FS.ExistsFile(path) || args.ForceDownload)
         {
             await Download(logger, args, uri, null, path);
@@ -39,16 +39,16 @@ public static partial class HttpRequestHelper
     /// <param name="uri">The URI to download from</param>
     /// <param name="args">The download or read arguments</param>
     /// <returns>The downloaded or cached content</returns>
-    public static async Task<string> DownloadOrRead(ILogger logger, string appDataCachePath, string uri, DownloadOrReadArgs args = null)
+    public static async Task<string> DownloadOrRead(ILogger logger, string appDataCachePath, string uri, DownloadOrReadArgs? args = null)
     {
         if (args == null)
         {
             args = new DownloadOrReadArgs();
         }
-        var value = UH.GetFileName(uri);
-        var fileName = FS.ReplaceInvalidFileNameChars(value);
-        fileName = FS.Combine(appDataCachePath, SH.AppendIfDontEndingWith(fileName, AllExtensions.html));
-        return await DownloadOrReadWorker(logger, fileName, uri);
+        var uriFileName = UH.GetFileName(uri);
+        var sanitizedFileName = FS.ReplaceInvalidFileNameChars(uriFileName);
+        sanitizedFileName = FS.Combine(appDataCachePath, SH.AppendIfDontEndingWith(sanitizedFileName, AllExtensions.html));
+        return await DownloadOrReadWorker(logger, sanitizedFileName, uri, args);
     }
 
     /// <summary>
@@ -60,11 +60,18 @@ public static partial class HttpRequestHelper
     {
         try
         {
-            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-            request.Method = "HEAD";
-            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-            response.Close();
-            return (response.StatusCode == HttpStatusCode.OK);
+            HttpWebRequest? request = WebRequest.Create(url) as HttpWebRequest;
+            if (request != null)
+            {
+                request.Method = "HEAD";
+                HttpWebResponse? response = request.GetResponse() as HttpWebResponse;
+                if (response != null)
+                {
+                    response.Close();
+                    return (response.StatusCode == HttpStatusCode.OK);
+                }
+            }
+            return false;
         }
         catch
         {
@@ -79,10 +86,10 @@ public static partial class HttpRequestHelper
     /// <param name="args">The response retrieval arguments</param>
     /// <param name="uri">The URI to check</param>
     /// <returns>True if resource was not found, false otherwise</returns>
-    public static bool IsNotFound(ILogger logger, GetResponseArgs args, object uri)
+    public static bool IsNotFound(ILogger logger, GetResponseArgs? args, object uri)
     {
-        HttpWebResponse response;
-        var test = GetResponseText(logger, args, uri.ToString(), HttpMethod.Get, null, out response);
+        HttpWebResponse? response;
+        var test = GetResponseText(logger, args, uri.ToString() ?? string.Empty, HttpMethod.Get, null, out response);
         return HttpResponseHelper.IsNotFound(response);
     }
 
@@ -93,10 +100,10 @@ public static partial class HttpRequestHelper
     /// <param name="args">The response retrieval arguments</param>
     /// <param name="uri">The URI to check</param>
     /// <returns>True if there was an error, false otherwise</returns>
-    public static bool SomeError(ILogger logger, GetResponseArgs args, object uri)
+    public static bool SomeError(ILogger logger, GetResponseArgs? args, object uri)
     {
-        HttpWebResponse response;
-        var test = GetResponseText(logger, args, uri.ToString(), HttpMethod.Get, null, out response);
+        HttpWebResponse? response;
+        var test = GetResponseText(logger, args, uri.ToString() ?? string.Empty, HttpMethod.Get, null, out response);
         return HttpResponseHelper.SomeError(response);
     }
 
@@ -105,18 +112,18 @@ public static partial class HttpRequestHelper
     /// </summary>
     /// <param name="logger">The logger instance</param>
     /// <param name="args">The response retrieval arguments</param>
-    /// <param name="hrefs">The list of URIs to download</param>
+    /// <param name="uris">The list of URIs to download</param>
     /// <param name="dontHaveAllowedExtension">Function to check if extension is not allowed (can be null)</param>
     /// <param name="folder2">The destination folder</param>
     /// <param name="collisionOption">The file move collision option</param>
     /// <param name="ext">The file extension (can be null)</param>
-    public static async Task DownloadAll(ILogger logger, GetResponseArgs args, List<string> hrefs, Func<string, bool> dontHaveAllowedExtension, string folder2, FileMoveCollisionOptionHttp collisionOption, string ext = null)
+    public static async Task DownloadAll(ILogger logger, GetResponseArgs? args, List<string> uris, Func<string, bool>? dontHaveAllowedExtension, string folder2, FileMoveCollisionOptionHttp collisionOption, string? ext = null)
     {
         if (collisionOption != FileMoveCollisionOptionHttp.Overwrite)
         {
             ThrowEx.Custom("Is allowed only Overwrite. Due to deps FS.MoveFile is not possible to use.");
         }
-        foreach (var item in hrefs)
+        foreach (var item in uris)
         {
             var tempPath = FS.GetTempFilePath();
             await Download(logger, args, item, dontHaveAllowedExtension, tempPath);
@@ -132,24 +139,24 @@ public static partial class HttpRequestHelper
     /// </summary>
     /// <param name="logger">The logger instance</param>
     /// <param name="args">The response retrieval arguments</param>
-    /// <param name="href">The URI to download from</param>
+    /// <param name="uri">The URI to download from</param>
     /// <param name="dontHaveAllowedExtension">Function to check if extension is not allowed (can be null)</param>
     /// <param name="folder2">The destination folder</param>
     /// <param name="fileName">The file name</param>
     /// <param name="ext">The file extension (can be null)</param>
     /// <returns>True if file was downloaded, false if already exists</returns>
-    public static async Task<bool> Download(ILogger logger, GetResponseArgs args, string href, Func<string, bool> dontHaveAllowedExtension, string folder2, string fileName, string ext = null)
+    public static async Task<bool> Download(ILogger logger, GetResponseArgs? args, string uri, Func<string, bool>? dontHaveAllowedExtension, string folder2, string fileName, string? ext = null)
     {
         if (dontHaveAllowedExtension != null)
         {
-            if (dontHaveAllowedExtension(ext))
+            if (ext != null && dontHaveAllowedExtension(ext))
             {
                 ext += ".jpeg";
             }
         }
         if (string.IsNullOrWhiteSpace(ext))
         {
-            ext = FS.GetExtension(href);
+            ext = FS.GetExtension(uri);
             ext = SHParts.RemoveAfterFirst(ext, "?");
         }
         fileName = SHParts.RemoveAfterFirst(fileName, "?");
@@ -157,7 +164,7 @@ public static partial class HttpRequestHelper
         FS.CreateFoldersPsysicallyUnlessThere(folder2);
         if (!FS.ExistsFile(path) || FS.GetFileSize(path) == 0)
         {
-            var count = await GetResponseBytes(logger, args, href, HttpMethod.Get);
+            var count = await GetResponseBytes(logger, args, uri, HttpMethod.Get);
             TF.WriteAllBytes(path, count);
             return true;
         }
@@ -175,17 +182,17 @@ public static partial class HttpRequestHelper
     /// <param name="dontHaveAllowedExtension">Function to check if extension is not allowed (can be null)</param>
     /// <param name="path">The destination file path</param>
     /// <returns>True if file was downloaded, false if already exists</returns>
-    public static async Task<bool> Download(ILogger logger, GetResponseArgs args, string uri, Func<string, bool> dontHaveAllowedExtension, string path)
+    public static async Task<bool> Download(ILogger logger, GetResponseArgs? args, string uri, Func<string, bool>? dontHaveAllowedExtension, string path)
     {
-        string parameter, fileName, ext;
-        FS.GetPathAndFileNameWithoutExtension(path, out parameter, out fileName, out ext);
-        return await Download(logger, args, uri, dontHaveAllowedExtension, parameter, fileName, Path.GetExtension(path));
+        string folderPath, fileName, ext;
+        FS.GetPathAndFileNameWithoutExtension(path, out folderPath, out fileName, out ext);
+        return await Download(logger, args, uri, dontHaveAllowedExtension, folderPath, fileName, Path.GetExtension(path));
     }
 
     /// <summary>
     /// Gets or sets the progress bar for HTTP operations
     /// </summary>
-    public static IProgressBarHttp ProgressBar { get; set; } = null;
+    public static IProgressBarHttp? ProgressBar { get; set; } = null;
 
     /// <summary>
     /// Downloads a file from the specified href with timeout
@@ -194,25 +201,25 @@ public static partial class HttpRequestHelper
     /// </summary>
     /// <param name="logger">The logger instance</param>
     /// <param name="args">The response retrieval arguments</param>
-    /// <param name="href">The URI to download from</param>
+    /// <param name="uri">The URI to download from</param>
     /// <param name="dontHaveAllowedExtension">Function to check if extension is not allowed (can be null)</param>
     /// <param name="folder2">The destination folder</param>
     /// <param name="fileName">The file name</param>
     /// <param name="timeoutInMs">The timeout in milliseconds</param>
     /// <param name="ext">The file extension (can be null)</param>
     /// <returns>True if file was downloaded, false if already exists</returns>
-    public static async Task<bool> Download(ILogger logger, GetResponseArgs args, string href, Func<string, bool> dontHaveAllowedExtension, string folder2, string fileName, int timeoutInMs, string ext = null)
+    public static async Task<bool> Download(ILogger logger, GetResponseArgs? args, string uri, Func<string, bool>? dontHaveAllowedExtension, string folder2, string fileName, int timeoutInMs, string? ext = null)
     {
         if (dontHaveAllowedExtension != null)
         {
-            if (dontHaveAllowedExtension(ext))
+            if (ext != null && dontHaveAllowedExtension(ext))
             {
                 ext += ".jpeg";
             }
         }
         if (string.IsNullOrWhiteSpace(ext))
         {
-            ext = Path.GetExtension(href);
+            ext = Path.GetExtension(uri);
             ext = SHParts.RemoveAfterFirst(ext, "?");
         }
         fileName = SHParts.RemoveAfterFirst(fileName, "?");
@@ -220,7 +227,7 @@ public static partial class HttpRequestHelper
         FS.CreateFoldersPsysicallyUnlessThere(folder2);
         if (!File.Exists(path) || new FileInfo(path).Length == 0)
         {
-            var count = await GetResponseBytes(logger, args, href, HttpMethod.Get, timeoutInMs);
+            var count = await GetResponseBytes(logger, args, uri, HttpMethod.Get, timeoutInMs);
             if (count.Length != 0)
             {
                 await File.WriteAllBytesAsync(path, count);
@@ -237,15 +244,15 @@ public static partial class HttpRequestHelper
     /// <returns>The shortened path suitable for file names</returns>
     static string ShortPathFromUri(string text)
     {
-        var value = UH.GetFileNameWithoutExtension(text);
+        var fileNameWithoutExtension = UH.GetFileNameWithoutExtension(text);
         var qs = new Uri(text).Query;
         StringBuilder stringBuilder = new StringBuilder();
-        var parameter = qs.Split('&');
-        foreach (var item in parameter)
+        var queryParameters = qs.Split('&');
+        foreach (var item in queryParameters)
         {
             stringBuilder.Append(item.Split('=')[1] + ",");
         }
-        text = FS.ReplaceInvalidFileNameChars(value + stringBuilder.ToString());
+        text = FS.ReplaceInvalidFileNameChars(fileNameWithoutExtension + stringBuilder.ToString());
         return text;
     }
 

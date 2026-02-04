@@ -1,3 +1,4 @@
+// variables names: ok
 using SunamoHttp;
 using SunamoHttp.Tests;
 using SunamoPlatformUwpInterop.AppData;

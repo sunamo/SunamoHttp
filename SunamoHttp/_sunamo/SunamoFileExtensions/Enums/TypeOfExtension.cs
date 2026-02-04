@@ -1,4 +1,3 @@
-// variables names: ok
 namespace SunamoHttp._sunamo.SunamoFileExtensions.Enums;
 
 internal enum TypeOfExtension
