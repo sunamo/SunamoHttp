@@ -128,7 +128,12 @@ public static partial class HttpRequestHelper
             var tempPath = FS.GetTempFilePath();
             await Download(logger, args, item, dontHaveAllowedExtension, tempPath);
             var to = FS.Combine(folder2, Path.GetFileName(item) + ext);
+#if NET48
+            if (File.Exists(to)) File.Delete(to);
+            File.Move(tempPath, to);
+#else
             File.Move(tempPath, to, true);
+#endif
         }
     }
 
@@ -230,7 +235,11 @@ public static partial class HttpRequestHelper
             var count = await GetResponseBytes(logger, args, uri, HttpMethod.Get, timeoutInMs);
             if (count.Length != 0)
             {
+#if NET48
+                File.WriteAllBytes(path, count);
+#else
                 await File.WriteAllBytesAsync(path, count);
+#endif
                 return true;
             }
         }
