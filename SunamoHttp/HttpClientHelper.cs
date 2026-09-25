@@ -35,19 +35,14 @@ public class HttpClientHelper
     /// <param name="httpRequestData">The HTTP request configuration data</param>
     /// <returns>The response text</returns>
     public static
-#if ASYNC
 async Task<string>
-#else
-string
-#endif
 GetResponseText(string address, HttpMethod method, HttpRequestData? httpRequestData = null)
     {
         HttpResponseMessage =
-#if ASYNC
             await
-#endif
             GetResponse(address, method, httpRequestData)!;
-        return await GetResponseText(HttpResponseMessage);
+        return
+            await GetResponseText(HttpResponseMessage);
     }
 
     /// <summary>
@@ -57,7 +52,7 @@ GetResponseText(string address, HttpMethod method, HttpRequestData? httpRequestD
     /// <returns>The response text with spaces normalized</returns>
     private static async Task<string> GetResponseText(HttpResponseMessage response)
     {
-        string responseText = "";
+        string responseText;
         using (response)
         {
             // Must be await, not AsyncHelper, not .Result, otherwise will be frozen
@@ -74,29 +69,17 @@ GetResponseText(string address, HttpMethod method, HttpRequestData? httpRequestD
     /// <param name="httpRequestData">The HTTP request configuration data</param>
     /// <returns>The response stream</returns>
     public static
-#if ASYNC
 async Task<Stream>
-#else
-  Stream
-#endif
 GetResponseStream(string address, HttpMethod method, HttpRequestData httpRequestData)
     {
         HttpResponseMessage response =
-#if ASYNC
             await
-#endif
             GetResponse(address, method, httpRequestData);
         using (response)
         {
-#if ASYNC
             return
-#if ASYNC
 await
-#endif
 response.Content.ReadAsStreamAsync();
-#else
-            return response.Content.ReadAsStreamAsync().Result;
-#endif
         }
     }
 
@@ -109,11 +92,7 @@ response.Content.ReadAsStreamAsync();
     /// <param name="httpRequestData">The HTTP request configuration data (can be null)</param>
     /// <returns>The HTTP response message</returns>
     public static
-#if ASYNC
     async Task<HttpResponseMessage>
-#else
-    HttpResponseMessage
-#endif
         GetResponse(string address, HttpMethod method, HttpRequestData? httpRequestData = null)
     {
         if (httpRequestData == null)
@@ -121,27 +100,18 @@ response.Content.ReadAsStreamAsync();
             httpRequestData = new HttpRequestData();
         }
         SetHttpHeaders(httpRequestData, HttpClientInstance);
-        string addressCopy = address;
 
         HttpContent? httpContent = httpRequestData.Content;
         HttpResponseMessage response;
         if (method == HttpMethod.Get)
         {
             response =
-#if ASYNC
                 await HttpClientInstance.GetAsync(address);
-#else
-                HttpClientInstance.GetAsync(address).Result;
-#endif
         }
         else if (method == HttpMethod.Post)
         {
             var responseTask = HttpClientInstance.PostAsync(address, httpContent);
-#if ASYNC
             response = await responseTask;
-#else
-            response = responseTask.Result;
-#endif
         }
         else
         {

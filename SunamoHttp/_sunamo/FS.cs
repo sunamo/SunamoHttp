@@ -18,7 +18,7 @@ internal class FS
             return;
         }
 
-        List<string> foldersToCreate = new List<string>
+        var foldersToCreate = new List<string>
         {
             path
         };
@@ -26,7 +26,7 @@ internal class FS
         while (true)
         {
             var parentPath = Path.GetDirectoryName(path);
-            if (parentPath == null)
+            if (parentPath is null)
             {
                 break;
             }
@@ -43,7 +43,7 @@ internal class FS
         }
 
         foldersToCreate.Reverse();
-        foreach (string item in foldersToCreate)
+        foreach (var item in foldersToCreate)
         {
             if (!Directory.Exists(item))
             {
@@ -57,20 +57,14 @@ internal class FS
     /// </summary>
     /// <param name="paths">The path segments to combine</param>
     /// <returns>The combined path</returns>
-    internal static string Combine(params string[] paths)
-    {
-        return Path.Combine(paths);
-    }
+    internal static string Combine(params string[] paths) => Path.Combine(paths);
 
     /// <summary>
     /// Checks if a file exists at the specified path
     /// </summary>
     /// <param name="path">The file path to check</param>
     /// <returns>True if the file exists, false otherwise</returns>
-    internal static bool ExistsFile(string path)
-    {
-        return FileMs.Exists(path);
-    }
+    internal static bool ExistsFile(string path) => FileMs.Exists(path);
 
     /// <summary>
     /// Gets the size of the file in bytes
@@ -101,10 +95,7 @@ internal class FS
     /// </summary>
     /// <param name="path">The file path</param>
     /// <returns>The file extension including the dot</returns>
-    internal static string GetExtension(string path)
-    {
-        return Path.GetExtension(path);
-    }
+    internal static string GetExtension(string path) => Path.GetExtension(path);
 
     /// <summary>
     /// Gets the path, file name without extension, and extension from a file path
@@ -124,18 +115,12 @@ internal class FS
     /// Gets a temporary file path
     /// </summary>
     /// <returns>A full path to a temporary file</returns>
-    internal static string GetTempFilePath()
-    {
-        return Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetTempFileName());
-    }
+    internal static string GetTempFilePath() => Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetTempFileName());
 
     /// <summary>
     /// Replaces all invalid file name characters with empty string
     /// </summary>
     /// <param name="fileName">The file name to sanitize</param>
     /// <returns>The file name with invalid characters removed</returns>
-    internal static string ReplaceInvalidFileNameChars(string fileName)
-    {
-        return string.Concat(fileName.Split(Path.GetInvalidFileNameChars()));
-    }
+    internal static string ReplaceInvalidFileNameChars(string fileName) => string.Concat(fileName.Split(Path.GetInvalidFileNameChars()));
 }

@@ -21,13 +21,11 @@ public static partial class HttpRequestHelper
         {
             args = new DownloadOrReadArgs();
         }
-        string? html = null;
         if (!FS.ExistsFile(path) || args.ForceDownload)
         {
             await Download(logger, args, uri, null, path);
         }
-        html = File.ReadAllText(path).FromSpace160To32();
-        return html;
+        return File.ReadAllText(path).FromSpace160To32();
     }
 
     /// <summary>
@@ -89,7 +87,7 @@ public static partial class HttpRequestHelper
     public static bool IsNotFound(ILogger logger, GetResponseArgs? args, object uri)
     {
         HttpWebResponse? response;
-        var test = GetResponseText(logger, args, uri.ToString() ?? string.Empty, HttpMethod.Get, null, out response);
+        GetResponseText(logger, args, uri.ToString() ?? string.Empty, HttpMethod.Get, null, out response);
         return HttpResponseHelper.IsNotFound(response);
     }
 
@@ -103,7 +101,7 @@ public static partial class HttpRequestHelper
     public static bool SomeError(ILogger logger, GetResponseArgs? args, object uri)
     {
         HttpWebResponse? response;
-        var test = GetResponseText(logger, args, uri.ToString() ?? string.Empty, HttpMethod.Get, null, out response);
+        GetResponseText(logger, args, uri.ToString() ?? string.Empty, HttpMethod.Get, null, out response);
         return HttpResponseHelper.SomeError(response);
     }
 
@@ -128,7 +126,7 @@ public static partial class HttpRequestHelper
             var tempPath = FS.GetTempFilePath();
             await Download(logger, args, item, dontHaveAllowedExtension, tempPath);
             var to = FS.Combine(folder2, Path.GetFileName(item) + ext);
-#if NET48
+#if NET48 || NETSTANDARD2_0
             if (File.Exists(to)) File.Delete(to);
             File.Move(tempPath, to);
 #else
@@ -235,7 +233,7 @@ public static partial class HttpRequestHelper
             var count = await GetResponseBytes(logger, args, uri, HttpMethod.Get, timeoutInMs);
             if (count.Length != 0)
             {
-#if NET48
+#if NET48 || NETSTANDARD2_0
                 File.WriteAllBytes(path, count);
 #else
                 await File.WriteAllBytesAsync(path, count);
