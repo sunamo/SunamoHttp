@@ -15,11 +15,7 @@ public class NetHelper
     /// <param name="httpRequestData">The HTTP request configuration data</param>
     /// <returns>The response text</returns>
     public static
-#if ASYNC
 async Task<string>
-#else
-string
-#endif
 PostFiles(string address, HttpMethod method, IList<UploadFile> files, Dictionary<string, string> values, HttpRequestData httpRequestData)
     {
         var boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x", NumberFormatInfo.InvariantInfo);
@@ -33,7 +29,7 @@ PostFiles(string address, HttpMethod method, IList<UploadFile> files, Dictionary
         {
             var buffer = Encoding.ASCII.GetBytes(boundary + Environment.NewLine);
             requestStream.Write(buffer, 0, buffer.Length);
-            buffer = Encoding.ASCII.GetBytes(string.Format("Content-Disposition: form-data; name=\"{0}\"{1}{1}", name, Environment.NewLine));
+            buffer = Encoding.ASCII.GetBytes($"Content-Disposition: form-data; name=\"{name}\"{Environment.NewLine}{Environment.NewLine}");
             requestStream.Write(buffer, 0, buffer.Length);
             buffer = Encoding.UTF8.GetBytes(values[name] + Environment.NewLine);
             requestStream.Write(buffer, 0, buffer.Length);
@@ -43,9 +39,9 @@ PostFiles(string address, HttpMethod method, IList<UploadFile> files, Dictionary
         {
             var buffer = Encoding.ASCII.GetBytes(boundary + Environment.NewLine);
             requestStream.Write(buffer, 0, buffer.Length);
-            buffer = Encoding.UTF8.GetBytes(string.Format("Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"{2}", file.Name, file.Filename, Environment.NewLine));
+            buffer = Encoding.UTF8.GetBytes($"Content-Disposition: form-data; name=\"{file.Name}\"; filename=\"{file.Filename}\"{Environment.NewLine}");
             requestStream.Write(buffer, 0, buffer.Length);
-            buffer = Encoding.ASCII.GetBytes(string.Format("Content-Type: {0}{1}", file.ContentType, Environment.NewLine));
+            buffer = Encoding.ASCII.GetBytes($"Content-Type: {file.ContentType}{Environment.NewLine}");
             requestStream.Write(buffer, 0, buffer.Length);
             if (file.Stream != null)
             {
@@ -62,9 +58,7 @@ PostFiles(string address, HttpMethod method, IList<UploadFile> files, Dictionary
         }
         httpRequestData.Content = content;
         var responseText =
-#if ASYNC
 await
-#endif
 HttpClientHelper.GetResponseText(address, method, httpRequestData);
         return responseText;
     }
