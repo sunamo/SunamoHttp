@@ -1,5 +1,10 @@
 # SunamoHttp
 
+## Short description
+
+Knihovna pro lokální cachování souborů, aby se omezil počet HTTP požadavků. Obsahuje pomocné třídy pro stahování a ukládání odpovědí. Součástí je Runner a testy.
+
+
 Caching files locally to limit HTTP requests
 
 ## Overview
