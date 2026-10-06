@@ -1,8 +1,5 @@
 namespace SunamoHttp._sunamo;
 
-/// <summary>
-/// String split helper methods
-/// </summary>
 internal class SHSplit
 {
     /// <summary>

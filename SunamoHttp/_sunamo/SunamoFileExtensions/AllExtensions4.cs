@@ -1,8 +1,6 @@
 namespace SunamoHttp._sunamo.SunamoFileExtensions;
 
-/// <summary>
-/// File extension constants - use Generate for AllExtensions when adding more than 1 new extension
-/// </summary>
+// use Generate for AllExtensions when adding more than 1 new extension
 internal partial class AllExtensions
 {
     [TypeOfExtension(TypeOfExtension.other)]
@@ -141,9 +139,7 @@ internal partial class AllExtensions
     internal const string access = ".access";
     [TypeOfExtension(TypeOfExtension.other)]
     internal const string lua = ".lua";
-    /// <summary>
-    /// All checked instances were text files
-    /// </summary>
+    // All checked instances were text files
     [TypeOfExtension(TypeOfExtension.settingsText)]
     internal const string cfg = ".cfg";
 }

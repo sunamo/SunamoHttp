@@ -1,8 +1,6 @@
 namespace SunamoHttp._sunamo.SunamoFileExtensions;
 
-/// <summary>
-/// File extension constants - use Generate for AllExtensions when adding more than 1 new extension
-/// </summary>
+// use Generate for AllExtensions when adding more than 1 new extension
 internal partial class AllExtensions
 {
     [TypeOfExtension(TypeOfExtension.configText)]
@@ -33,9 +31,7 @@ internal partial class AllExtensions
     internal const string eslintrc = ".eslintrc";
     [TypeOfExtension(TypeOfExtension.configText)]
     internal const string prettierrc = ".prettierrc";
-    /// <summary>
-    /// VCF is indeed a text file
-    /// </summary>
+    // VCF is indeed a text file
     [TypeOfExtension(TypeOfExtension.contentText)]
     internal const string vcf = ".vcf";
     [TypeOfExtension(TypeOfExtension.archive)]
@@ -116,9 +112,7 @@ internal partial class AllExtensions
     internal const string baml = ".baml";
     [TypeOfExtension(TypeOfExtension.resource)]
     internal const string resx = ".resx";
-    /// <summary>
-    /// Visual Studio export format (XML-based)
-    /// </summary>
+    // Visual Studio export format (XML-based)
     [TypeOfExtension(TypeOfExtension.settingsText)]
     internal const string settings = ".settings";
     [TypeOfExtension(TypeOfExtension.visual_studioText)]

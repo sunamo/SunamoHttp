@@ -1,14 +1,7 @@
 namespace SunamoHttp._sunamo;
 
-/// <summary>
-/// File system helper methods
-/// </summary>
 internal class FS
 {
-    /// <summary>
-    /// Creates all folders in the path physically unless they already exist
-    /// </summary>
-    /// <param name="path">The directory path to create</param>
     internal static void CreateFoldersPsysicallyUnlessThere(string path)
     {
         ThrowEx.IsNullOrEmpty("path", path);
@@ -66,11 +59,6 @@ internal class FS
     /// <returns>True if the file exists, false otherwise</returns>
     internal static bool ExistsFile(string path) => FileMs.Exists(path);
 
-    /// <summary>
-    /// Gets the size of the file in bytes
-    /// </summary>
-    /// <param name="filePath">The path to the file</param>
-    /// <returns>The file size in bytes, or 0 if file doesn't exist or error occurs</returns>
     internal static long GetFileSize(string filePath)
     {
         FileInfo? fileInfo = null;
@@ -97,13 +85,6 @@ internal class FS
     /// <returns>The file extension including the dot</returns>
     internal static string GetExtension(string path) => Path.GetExtension(path);
 
-    /// <summary>
-    /// Gets the path, file name without extension, and extension from a file path
-    /// </summary>
-    /// <param name="filePath">The full file path</param>
-    /// <param name="path">Output parameter for the directory path</param>
-    /// <param name="file">Output parameter for the file name without extension</param>
-    /// <param name="ext">Output parameter for the file extension</param>
     internal static void GetPathAndFileNameWithoutExtension(string filePath, out string path, out string file, out string ext)
     {
         path = Path.GetDirectoryName(filePath) + '\\';

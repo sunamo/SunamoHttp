@@ -1,8 +1,5 @@
 namespace SunamoHttp._sunamo;
 
-/// <summary>
-/// String extension methods for HTTP operations
-/// </summary>
 internal static class StringExtensions
 {
     /// <summary>
