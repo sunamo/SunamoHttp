@@ -1,8 +1,5 @@
 namespace SunamoHttp._sunamo;
 
-/// <summary>
-/// String replacement helper methods
-/// </summary>
 internal class SHReplace
 {
     /// <summary>
