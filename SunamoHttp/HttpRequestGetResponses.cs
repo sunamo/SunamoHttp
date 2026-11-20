@@ -1,5 +1,8 @@
 namespace SunamoHttp;
 
+/// <summary>
+/// Represents the http request helper type.
+/// </summary>
 partial class HttpRequestHelper
 {
     static void LogDownload(ILogger logger, string address)
@@ -10,6 +13,15 @@ partial class HttpRequestHelper
         }
     }
 
+    /// <summary>
+    /// Get response bytes.
+    /// </summary>
+    /// <param name="logger">The logger.</param>
+    /// <param name="args">The args.</param>
+    /// <param name="address">The address.</param>
+    /// <param name="method">The method.</param>
+    /// <param name="timeoutInMs">The timeout in ms.</param>
+    /// <returns>The get response bytes result.</returns>
     public static async Task<byte[]> GetResponseBytes(ILogger logger, GetResponseArgs? args, string address, HttpMethod method, int timeoutInMs = 30000)
     {
         if (args == null)
@@ -61,6 +73,13 @@ partial class HttpRequestHelper
         }
     }
 
+    /// <summary>
+    /// Get response text async.
+    /// </summary>
+    /// <param name="logger">The logger.</param>
+    /// <param name="args">The args.</param>
+    /// <param name="address">The address.</param>
+    /// <returns>The get response text async result.</returns>
     public async static Task<string> GetResponseTextAsync(ILogger logger, GetResponseArgs? args, string address)
     {
         if (args == null)
@@ -97,12 +116,29 @@ partial class HttpRequestHelper
         }
     }
 
+    /// <summary>
+    /// Get response text.
+    /// </summary>
+    /// <param name="logger">The logger.</param>
+    /// <param name="args">The args.</param>
+    /// <param name="address">The address.</param>
+    /// <param name="method">The method.</param>
+    /// <param name="httpRequestData">The http request data.</param>
+    /// <returns>The get response text result.</returns>
     public static string GetResponseText(ILogger logger, GetResponseArgs? args, string address, HttpMethod method, HttpRequestData? httpRequestData)
     {
         HttpWebResponse? response;
         return GetResponseText(logger, args, address, method, httpRequestData, out response);
     }
 
+    /// <summary>
+    /// Get response stream.
+    /// </summary>
+    /// <param name="logger">The logger.</param>
+    /// <param name="args">The args.</param>
+    /// <param name="address">The address.</param>
+    /// <param name="method">The method.</param>
+    /// <returns>The get response stream result.</returns>
     public static Stream? GetResponseStream(ILogger logger, GetResponseArgs? args, string address, HttpMethod method)
     {
         if (args == null)
@@ -125,12 +161,32 @@ partial class HttpRequestHelper
         return response.GetResponseStream();
     }
 
+    /// <summary>
+    /// Get response text.
+    /// </summary>
+    /// <param name="logger">The logger.</param>
+    /// <param name="args">The args.</param>
+    /// <param name="address">The address.</param>
+    /// <param name="method">The method.</param>
+    /// <param name="httpRequestData">The http request data.</param>
+    /// <param name="response">The response.</param>
+    /// <returns>The get response text result.</returns>
     public static string GetResponseText(ILogger logger, GetResponseArgs? args, string address, HttpMethod method, HttpRequestData? httpRequestData, out HttpWebResponse? response)
     {
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(address);
         return GetResponseText(logger, args, request, method, httpRequestData, out response);
     }
 
+    /// <summary>
+    /// Get response text.
+    /// </summary>
+    /// <param name="logger">The logger.</param>
+    /// <param name="args">The args.</param>
+    /// <param name="request">The request.</param>
+    /// <param name="method">The method.</param>
+    /// <param name="httpRequestData">The http request data.</param>
+    /// <param name="response">The response.</param>
+    /// <returns>The get response text result.</returns>
     public static string GetResponseText(ILogger logger, GetResponseArgs? args, HttpWebRequest request, HttpMethod method, HttpRequestData? httpRequestData, out HttpWebResponse? response)
     {
         if (args == null)

@@ -1,7 +1,15 @@
 namespace SunamoHttp;
 
+/// <summary>
+/// Represents the http web response helper http type.
+/// </summary>
 public class HttpWebResponseHelperHttp
 {
+    /// <summary>
+    /// Some error.
+    /// </summary>
+    /// <param name="response">The response.</param>
+    /// <returns>The some error result.</returns>
     public static bool SomeError(HttpWebResponse response)
     {
         if (response == null)
@@ -19,6 +27,11 @@ public class HttpWebResponseHelperHttp
         return true;
     }
 
+    /// <summary>
+    /// Is not found.
+    /// </summary>
+    /// <param name="response">The response.</param>
+    /// <returns>The is not found result.</returns>
     public static bool IsNotFound(HttpWebResponse response)
     {
         if (response == null)
