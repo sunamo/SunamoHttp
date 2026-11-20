@@ -1,4 +1,3 @@
-// variables names: ok
 using Microsoft.Extensions.Logging;
 using SunamoHttp.Args;
 #if !NET8_0
