@@ -1,4 +1,3 @@
-// variables names: ok
 using SunamoHttp;
 using SunamoHttp.Tests;
 using SunamoPlatformUwpInterop.AppData;
@@ -17,7 +16,6 @@ internal class Program
     static async Task MainAsync(string[] args)
     {
         HttpRequestHelperTests t = new HttpRequestHelperTests();
-        //await t.DownloadOrReadTest();
         await t.DownloadTest();
     }
 }

@@ -72,7 +72,7 @@ internal partial class AllExtensions
     [TypeOfExtension(TypeOfExtension.other)]
     internal const string suppressions = ".suppressions";
     [TypeOfExtension(TypeOfExtension.other)]
-    internal const string vim = ".vim";
+    internal const string knowledge = ".vim";
     [TypeOfExtension(TypeOfExtension.other)]
     internal const string mak = ".mak";
     [TypeOfExtension(TypeOfExtension.other)]

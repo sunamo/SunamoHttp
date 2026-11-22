@@ -2,6 +2,14 @@ namespace SunamoHttp;
 
 public static partial class HttpRequestHelper
 {
+    /// <summary>
+    /// Download or read worker.
+    /// </summary>
+    /// <param name="logger">The logger.</param>
+    /// <param name="path">The path.</param>
+    /// <param name="uri">The uri.</param>
+    /// <param name="args">The args.</param>
+    /// <returns>The download or read worker result.</returns>
     public static async Task<string> DownloadOrReadWorker(ILogger logger, string path, string uri, DownloadOrReadArgs? args = null)
     {
         if (args == null)
@@ -16,6 +24,14 @@ public static partial class HttpRequestHelper
     }
 
     // WARNING: Switched parameter order - A2 and A1
+    /// <summary>
+    /// Download or read.
+    /// </summary>
+    /// <param name="logger">The logger.</param>
+    /// <param name="appDataCachePath">The app data cache path.</param>
+    /// <param name="uri">The uri.</param>
+    /// <param name="args">The args.</param>
+    /// <returns>The download or read result.</returns>
     public static async Task<string> DownloadOrRead(ILogger logger, string appDataCachePath, string uri, DownloadOrReadArgs? args = null)
     {
         if (args == null)
@@ -28,6 +44,11 @@ public static partial class HttpRequestHelper
         return await DownloadOrReadWorker(logger, sanitizedFileName, uri, args);
     }
 
+    /// <summary>
+    /// Exists page.
+    /// </summary>
+    /// <param name="url">The url.</param>
+    /// <returns>The exists page result.</returns>
     public static bool ExistsPage(string url)
     {
         try
@@ -51,6 +72,13 @@ public static partial class HttpRequestHelper
         }
     }
 
+    /// <summary>
+    /// Is not found.
+    /// </summary>
+    /// <param name="logger">The logger.</param>
+    /// <param name="args">The args.</param>
+    /// <param name="uri">The uri.</param>
+    /// <returns>The is not found result.</returns>
     public static bool IsNotFound(ILogger logger, GetResponseArgs? args, object uri)
     {
         HttpWebResponse? response;
@@ -58,6 +86,13 @@ public static partial class HttpRequestHelper
         return HttpResponseHelper.IsNotFound(response);
     }
 
+    /// <summary>
+    /// Some error.
+    /// </summary>
+    /// <param name="logger">The logger.</param>
+    /// <param name="args">The args.</param>
+    /// <param name="uri">The uri.</param>
+    /// <returns>The some error result.</returns>
     public static bool SomeError(ILogger logger, GetResponseArgs? args, object uri)
     {
         HttpWebResponse? response;
@@ -65,6 +100,16 @@ public static partial class HttpRequestHelper
         return HttpResponseHelper.SomeError(response);
     }
 
+    /// <summary>
+    /// Download all.
+    /// </summary>
+    /// <param name="logger">The logger.</param>
+    /// <param name="args">The args.</param>
+    /// <param name="uris">The uris.</param>
+    /// <param name="dontHaveAllowedExtension">The dont have allowed extension.</param>
+    /// <param name="folder2">The folder 2.</param>
+    /// <param name="collisionOption">The collision option.</param>
+    /// <param name="ext">The ext.</param>
     public static async Task DownloadAll(ILogger logger, GetResponseArgs? args, List<string> uris, Func<string, bool>? dontHaveAllowedExtension, string folder2, FileMoveCollisionOptionHttp collisionOption, string? ext = null)
     {
         if (collisionOption != FileMoveCollisionOptionHttp.Overwrite)
@@ -85,6 +130,17 @@ public static partial class HttpRequestHelper
         }
     }
 
+    /// <summary>
+    /// Download.
+    /// </summary>
+    /// <param name="logger">The logger.</param>
+    /// <param name="args">The args.</param>
+    /// <param name="uri">The uri.</param>
+    /// <param name="dontHaveAllowedExtension">The dont have allowed extension.</param>
+    /// <param name="folder2">The folder 2.</param>
+    /// <param name="fileName">The file name.</param>
+    /// <param name="ext">The ext.</param>
+    /// <returns>The download result.</returns>
     public static async Task<bool> Download(ILogger logger, GetResponseArgs? args, string uri, Func<string, bool>? dontHaveAllowedExtension, string folder2, string fileName, string? ext = null)
     {
         if (dontHaveAllowedExtension != null)
@@ -111,6 +167,15 @@ public static partial class HttpRequestHelper
         return false;
     }
 
+    /// <summary>
+    /// Download.
+    /// </summary>
+    /// <param name="logger">The logger.</param>
+    /// <param name="args">The args.</param>
+    /// <param name="uri">The uri.</param>
+    /// <param name="dontHaveAllowedExtension">The dont have allowed extension.</param>
+    /// <param name="path">The path.</param>
+    /// <returns>The download result.</returns>
     public static async Task<bool> Download(ILogger logger, GetResponseArgs? args, string uri, Func<string, bool>? dontHaveAllowedExtension, string path)
     {
         string folderPath, fileName, ext;
@@ -118,8 +183,23 @@ public static partial class HttpRequestHelper
         return await Download(logger, args, uri, dontHaveAllowedExtension, folderPath, fileName, Path.GetExtension(path));
     }
 
+    /// <summary>
+    /// Gets or sets the progress bar.
+    /// </summary>
     public static IProgressBarHttp? ProgressBar { get; set; } = null;
 
+    /// <summary>
+    /// Download.
+    /// </summary>
+    /// <param name="logger">The logger.</param>
+    /// <param name="args">The args.</param>
+    /// <param name="uri">The uri.</param>
+    /// <param name="dontHaveAllowedExtension">The dont have allowed extension.</param>
+    /// <param name="folder2">The folder 2.</param>
+    /// <param name="fileName">The file name.</param>
+    /// <param name="timeoutInMs">The timeout in ms.</param>
+    /// <param name="ext">The ext.</param>
+    /// <returns>The download result.</returns>
     public static async Task<bool> Download(ILogger logger, GetResponseArgs? args, string uri, Func<string, bool>? dontHaveAllowedExtension, string folder2, string fileName, int timeoutInMs, string? ext = null)
     {
         if (dontHaveAllowedExtension != null)
@@ -167,6 +247,11 @@ public static partial class HttpRequestHelper
         return text;
     }
 
+    /// <summary>
+    /// Before testing ip address.
+    /// </summary>
+    /// <param name="ipAddress">The ip address.</param>
+    /// <returns>The before testing ip address result.</returns>
     public static string BeforeTestingIpAddress(string ipAddress)
     {
         if (ipAddress == "::1")
