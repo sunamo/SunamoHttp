@@ -15,7 +15,8 @@ internal class Program
 
     static async Task MainAsync(string[] args)
     {
-        HttpRequestHelperTests t = new HttpRequestHelperTests();
-        await t.DownloadTest();
+        HttpRequestHelperSyncTests t = new HttpRequestHelperSyncTests();
+        t.DownloadFile_CreatesFolderAndWritesFile();
+        await Task.CompletedTask;
     }
 }
